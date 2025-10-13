@@ -1,7 +1,11 @@
 NAME = scop
 
-CC = c++
-CFLAGS = -Wall -Wextra -Werror -g -std=c++17
+C++ = c++
+CC = cc
+
+C++FLAGS = -g -std=c++17
+CFLAGS = -Wall -Wextra -Werror -g
+
 INCLUDES = -Iincludes
 
 OBJDIR = obj
@@ -17,13 +21,13 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)/srcs
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(C++) $(C++FLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -lglfw -ldl -lGL -o $(NAME)
+	$(C++) $(C++FLAGS) $(OBJS) -lglfw -ldl -lGL -lGLU -lGLEW -lm -o $(NAME)
 	@echo "\033[32m✔ Compilation completed\033[0m"
 
 clean:
