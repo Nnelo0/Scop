@@ -10,7 +10,7 @@ INCLUDES = -Iincludes
 
 OBJDIR = obj
 
-SRCS = srcs/main.cpp
+SRCS = srcs/main.cpp srcs/obj.cpp
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 OBJS := $(OBJS:%.c=$(OBJDIR)/%.o)
 

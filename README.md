@@ -8,8 +8,8 @@ The object can move along the three axes in both directions.
 
 # objective 
 [✅] - Open a interactive window with OpenGL
-✅[] - Understand matrice, vertex, shaders, and texture
-[] - Understand .obj and .mtl files
+[✅] - Understand matrice, vertex, shaders, and texture
+[✅] - Understand .obj and .mtl files and parse
 [] - Display a 3D object in a window
 [] - Rotate this object
 [] - Move the object
