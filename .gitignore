@@ -1,4 +1,5 @@
 .vscode
 *.o
+objs
 obj
 scop

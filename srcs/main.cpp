@@ -1,6 +1,4 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "all.hpp"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
 {
@@ -14,8 +12,18 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	try
+	{
+		Obj test(argv[1]);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		return -1;
+	}
+	
 	if (!glfwInit()) {
 		std::cerr << "failed to init\n";
 		return -1;
