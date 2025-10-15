@@ -12,36 +12,29 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 }
 
-void drawColoredFaces(const Obj &obj)
-{
-    glBegin(GL_TRIANGLES);
-
-    for (size_t i = 0; i < obj.faces.size(); i += 3)
-	{
-	    const t_vertex &a = obj.verticesParse[obj.faces[i] - 1];
-	    const t_vertex &b = obj.verticesParse[obj.faces[i+1] - 1];
-	    const t_vertex &c = obj.verticesParse[obj.faces[i+2] - 1];
-
-	    glColor3f(
-	        (rand() % 100) / 100.0f,
-	        (rand() % 100) / 100.0f,
-	        (rand() % 100) / 100.0f
-	    );
-
-	    glVertex3f(a.x, a.y, a.z);
-	    glVertex3f(b.x, b.y, b.z);
-	    glVertex3f(c.x, c.y, c.z);
-	}
-
-    glEnd();
-}
-
 int main(int argc, char **argv)
 {
 	try
 	{
 		Obj obj(argv[1]);
-		
+		cout << "[DEBUG] faces -> \n";
+		int j = 0;
+		for (auto i = obj.faces.begin(); i != obj.faces.end(); i++)
+		{
+			if (j == 3) {cout << "\n"; j = 0;}
+			cout << (*i) << ", ";
+			j++;
+		}
+		cout << '\n';
+
+		cout << "[DEBUG] vertex -> \n";
+		for (auto i = obj.verticesParse.begin(); i != obj.verticesParse.end(); i++)
+		{
+			cout << "{coords: " << (*i).x << ", " << (*i).y << ", " << (*i).z << " } {colors: " << (*i).r << ", " << (*i).g << ", " << (*i).b << " }";
+			cout << '\n';
+		}
+
+
 		if (!glfwInit()) {
 			std::cerr << "failed to init\n";
 			return -1;
@@ -68,14 +61,6 @@ int main(int argc, char **argv)
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glEnable(GL_DEPTH_TEST);
 
-		cout << "  0--------0\n" 
-			 << " /|       /|\n"
-			 << "0--------0 |\n" 
-			 << "| |      | |\n" 
-			 << "| 0------|-0\n"
-			 << "|/       |/\n"
-			 << "0--------0 \n";
-
 		/*	
 			VAO (Vertex Array Object) -> all config, which VBO/EBO use...
 			VBO (Vertex Buffer Object) -> (x, y, z)
@@ -91,14 +76,18 @@ int main(int argc, char **argv)
 
 		// -- VBO --
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() * sizeof(float), obj.vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, obj.verticesParse.size() *  sizeof(vertex), obj.verticesParse.data(), GL_STATIC_DRAW);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(vertex), (void *)0);
 
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(3, GL_FLOAT, sizeof(vertex), (void *)(3 * sizeof(float)));
 		// -- EBO --
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj.faces.size() * sizeof(unsigned int), obj.faces.data(), GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+		// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		// glEnableVertexAttribArray(0);
 
 		glBindVertexArray(0);
 
@@ -115,9 +104,9 @@ int main(int argc, char **argv)
 
 		double rotationAngle = 0.1;
 		while (!glfwWindowShouldClose(window)) {
-			rotationAngle += 0.1f;
+			rotationAngle += 0.05f;
 			processInput(window);
-			
+
 			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -128,8 +117,6 @@ int main(int argc, char **argv)
 
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, obj.faces.size(), GL_UNSIGNED_INT, 0);
-
-			// drawColoredFaces(obj);
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();

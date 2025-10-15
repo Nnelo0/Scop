@@ -4,6 +4,7 @@
 typedef struct vertex
 {
 	float x,y,z;
+	float r, g, b;
 } t_vertex;
 
 typedef struct face

@@ -1,4 +1,4 @@
-# Cube généré automatiquement
+# Cube
 o Cube
 
 v -1 -1 -1
@@ -11,7 +11,7 @@ v 1 1 1
 v -1 1 1
 
 # Faces du cube
-f 1 2 3
+f 1 2 3 4
 f 2 6 7
 f 2 7 3
 f 6 5 8

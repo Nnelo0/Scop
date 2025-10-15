@@ -47,12 +47,15 @@ Obj::Obj(string filename)
 				switch (i) {
 					case 0:
 						tmp.x = value;
+						tmp.r = static_cast<float>(rand()) / 2147483647.0f;
 						break;
 					case 1:
 						tmp.y = value;
+						tmp.g = static_cast<float>(rand()) / 2147483647.0f;
 						break;
 					case 2:
 						tmp.z = value;
+						tmp.b = static_cast<float>(rand()) / 2147483647.0f;
 						break;
 				}
 			}
@@ -76,10 +79,11 @@ Obj::Obj(string filename)
 					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' '))  { cout << "line[j] ["<< line[j] << "]\n"; throw runtime_error("Failed to read Face -> " + line + '!'); }
 				}
 
-				double idx = atof(tmpValue.c_str());
-				if (idx <= 0)
+				double idx = atof(tmpValue.c_str()) - 1;
+				if (idx < 0)
 					throw runtime_error("Failed to read Face -> " + line + '!');
-				faces.push_back(idx);
+				if (tmpFace.vertexCount != 3)
+					faces.push_back(idx);
 				switch (i) {
 					case 0:
 						tmpFace.v1 = idx;
@@ -99,7 +103,14 @@ Obj::Obj(string filename)
 						break;
 				}
 			}
-			cout << "[DEBUG] : f " << " -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
+			if (tmpFace.vertexCount == 4) {
+				faces.push_back(tmpFace.v1);
+				faces.push_back(tmpFace.v4);
+				faces.push_back(tmpFace.v3);
+				cout << " [DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
+			}
+
+			cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
 			cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
 			facesParse.push_back(tmpFace);
 		}
