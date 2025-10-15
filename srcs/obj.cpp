@@ -2,10 +2,10 @@
 
 vertex Obj::getVertexFromVertices(int idx)
 {
-	if (vertices.size() < idx) {
+	if (verticesParse.size() < idx) {
 		out_of_range("Invalid idx for face");
 	}
-	return vertices[idx];
+	return verticesParse[idx];
 }
 
 Obj::Obj(string filename)
@@ -43,6 +43,7 @@ Obj::Obj(string filename)
 				}
 
 				double value = atof(tmpValue.c_str());
+				vertices.push_back(value);
 				switch (i) {
 					case 0:
 						tmp.x = value;
@@ -55,7 +56,7 @@ Obj::Obj(string filename)
 						break;
 				}
 			}
-			vertices.push_back(tmp);
+			verticesParse.push_back(tmp);
 		}
 
 		if (line.find_first_of('s') == 0 && line.find_first_of(' ') == 1) {
@@ -76,6 +77,9 @@ Obj::Obj(string filename)
 				}
 
 				double idx = atof(tmpValue.c_str());
+				if (idx <= 0)
+					throw runtime_error("Failed to read Face -> " + line + '!');
+				faces.push_back(idx);
 				switch (i) {
 					case 0:
 						tmpFace.v1 = idx;
@@ -97,7 +101,7 @@ Obj::Obj(string filename)
 			}
 			cout << "[DEBUG] : f " << " -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
 			cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
-			faces.push_back(tmpFace);
+			facesParse.push_back(tmpFace);
 		}
 	}
 	if (nameMtl.empty()) {
@@ -107,7 +111,7 @@ Obj::Obj(string filename)
 		cout << "[DEBUG] : Failed to found .mtl\n";
 	}
 
-	if (faces.empty() || vertices.empty())
+	if (facesParse.empty() || verticesParse.empty() || faces.empty() || vertices.empty())
 		throw runtime_error("Failed to parse .obj files");
 
 	objFile.close();

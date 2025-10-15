@@ -19,9 +19,11 @@ class Obj
 		string nameMtl;
 		string sMode;
 
-		vector<vertex> vertices;
-		vector<face> faces;
 	public:
+		vector<vertex> verticesParse;
+		vector<face> facesParse;
+		vector<float> vertices;
+		vector<unsigned int> faces;
 		Obj(string filename);
 		vertex getVertexFromVertices(int idx);
 		~Obj();
