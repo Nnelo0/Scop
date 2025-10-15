@@ -7,9 +7,6 @@
 #include <limits.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm/glm/glm.hpp>
-#include <glm/glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/glm/gtc/type_ptr.hpp>
 
 /*----- DEFINE COLORS -----*/
 #define RESET	"\033[0m"

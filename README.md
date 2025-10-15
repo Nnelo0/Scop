@@ -10,12 +10,13 @@ The object can move along the three axes in both directions.
 [✅] - Open a interactive window with OpenGL
 [✅] - Understand matrice, vertex, shaders, and texture
 [✅] - Understand .obj and .mtl files and parse
-[✅] - Display a 3D object in a window
-[✅] - Rotate this object around itself
-[✅] - Move the object
+[≃ ✅] - Display a 3D object in a window 
+[≃ ✅] - Rotate this object around itself
+[≃ ✅] - Move the object
 [] - Add colors to show different aspects of the object
 [] - Add smooth textures
 
+*≃ need to create my own functions and not using the actual functions !
 # bonuses
 [] - A GUI to display fps, triangles in the scene, and some useful info
 [] - Another GUI to change rotation speed or texture

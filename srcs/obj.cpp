@@ -15,6 +15,7 @@ Obj::Obj(string filename)
 	if (!objFile)
 		throw runtime_error("Failed to read " + filename + '!');
 
+	int nextColors = 'b';
 	while (getline(objFile, line)) {
 		if (line.find_first_of('#') != string::npos) {
 			line = line.substr(0, line.find_first_of('#'));
@@ -34,6 +35,22 @@ Obj::Obj(string filename)
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
 			line.erase(0, 2);
 			t_vertex tmp;
+			float colors;
+			switch (nextColors)
+			{
+				case 'b':
+					colors = 0.0f;
+					nextColors = 'g';
+					break;
+				case 'g':
+					colors = 0.5f;
+					nextColors = 'lg';
+					break;
+				case 'lg':
+					colors = 0.8f;
+					nextColors = 'b';
+					break;
+			}
 			for (size_t i = 0; i < 3; i++) {
 				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line + '!');
 				string tmpValue = line.substr(0, line.find_first_of(' '));
@@ -44,18 +61,19 @@ Obj::Obj(string filename)
 
 				double value = atof(tmpValue.c_str());
 				vertices.push_back(value);
+
 				switch (i) {
 					case 0:
 						tmp.x = value;
-						tmp.r = static_cast<float>(rand()) / 2147483647.0f;
+						tmp.r = colors;
 						break;
 					case 1:
 						tmp.y = value;
-						tmp.g = static_cast<float>(rand()) / 2147483647.0f;
+						tmp.g = colors;
 						break;
 					case 2:
 						tmp.z = value;
-						tmp.b = static_cast<float>(rand()) / 2147483647.0f;
+						tmp.b = colors;
 						break;
 				}
 			}
@@ -111,6 +129,7 @@ Obj::Obj(string filename)
 			}
 
 			cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
+			cout << "TEST: " << verticesParse[tmpFace.v1].x << "\n"; // this help to rewrite vertices for each triangles (duplicate coord for vertex like f 2 3 4 take each coord for 2 3 4 and store in vector and f 4 5 3 take each coord to store in the same vector so we have 2 times the vertex 4, this is for colors of each triangles (faces))
 			cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
 			facesParse.push_back(tmpFace);
 		}

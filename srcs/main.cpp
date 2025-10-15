@@ -11,24 +11,12 @@ void processInput(GLFWwindow *window, Obj &obj)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		obj.position[0] -= 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		obj.position[0] += 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		obj.position[1] += 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		obj.position[1] -= 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		obj.position[2] += 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		obj.position[2] -= 0.2;
-	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) obj.position[0] -= 0.2;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) obj.position[0] += 0.2;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) obj.position[1] += 0.2;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) obj.position[1] -= 0.2;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) obj.position[2] += 0.2;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) obj.position[2] -= 0.2;
 }
 
 int main(int argc, char **argv)
@@ -58,8 +46,8 @@ int main(int argc, char **argv)
 			return -1;
 		}
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 		GLFWwindow *window = glfwCreateWindow(1920, 1080, "Scop", NULL, NULL);
