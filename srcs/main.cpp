@@ -6,10 +6,29 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
 	glViewport(0, 0, width, heigth);
 }
 
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, Obj &obj)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		obj.position[0] -= 0.2;
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		obj.position[0] += 0.2;
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		obj.position[1] += 0.2;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		obj.position[1] -= 0.2;
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		obj.position[2] += 0.2;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		obj.position[2] -= 0.2;
+	}
 }
 
 int main(int argc, char **argv)
@@ -33,7 +52,6 @@ int main(int argc, char **argv)
 			cout << "{coords: " << (*i).x << ", " << (*i).y << ", " << (*i).z << " } {colors: " << (*i).r << ", " << (*i).g << ", " << (*i).b << " }";
 			cout << '\n';
 		}
-
 
 		if (!glfwInit()) {
 			std::cerr << "failed to init\n";
@@ -61,7 +79,7 @@ int main(int argc, char **argv)
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glEnable(GL_DEPTH_TEST);
 
-		/*	
+		/*
 			VAO (Vertex Array Object) -> all config, which VBO/EBO use...
 			VBO (Vertex Buffer Object) -> (x, y, z)
 			EBO (Element Buffer Objet) -> (1, 2, 5) stock index of vertex to draw triangles
@@ -82,6 +100,7 @@ int main(int argc, char **argv)
 
 		glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(3, GL_FLOAT, sizeof(vertex), (void *)(3 * sizeof(float)));
+
 		// -- EBO --
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj.faces.size() * sizeof(unsigned int), obj.faces.data(), GL_STATIC_DRAW);
@@ -91,21 +110,15 @@ int main(int argc, char **argv)
 
 		glBindVertexArray(0);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(90.0, 1920.0 / 1080.0, 0.1, 100.0); // FOV, aspect, near, far
-			
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glTranslatef(0.0f, 0.0f, -3.0f);
+		gluPerspective(45.0, 1920.0 / 1080.0, 0.1, 100.0); // FOV, aspect, near, far
 
 		double rotationAngle = 0.1;
+
 		while (!glfwWindowShouldClose(window)) {
 			rotationAngle += 0.05f;
-			processInput(window);
+			processInput(window, obj);
 
 			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -113,10 +126,25 @@ int main(int argc, char **argv)
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			glTranslatef(0.0f, 0.0f, -6.0f);
-			glRotatef(rotationAngle * 30.0f, 0.0f, 1.0f, 0.0f);
 
 			glBindVertexArray(VAO);
+			glPushMatrix();
+
+			glTranslatef(obj.position[0], obj.position[1], obj.position[2]);
+			glTranslatef(obj.center_x, obj.center_y, obj.center_z);
+			glRotatef(rotationAngle * 30.0f, 0.0f, 1.0f, 0.0f);
+			glTranslatef(-obj.center_x, -obj.center_y, -obj.center_z);
 			glDrawElements(GL_TRIANGLES, obj.faces.size(), GL_UNSIGNED_INT, 0);
+
+			//-- DEBUG --
+			glPointSize(20.0f);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glBegin(GL_POINTS);
+				glVertex3d(obj.center_x, obj.center_y, obj.center_z);
+			glEnd();
+			//-- DEBUG --
+
+			glPopMatrix();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();

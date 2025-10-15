@@ -107,7 +107,7 @@ Obj::Obj(string filename)
 				faces.push_back(tmpFace.v1);
 				faces.push_back(tmpFace.v4);
 				faces.push_back(tmpFace.v3);
-				cout << " [DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
+				cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 			}
 
 			cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
@@ -115,6 +115,23 @@ Obj::Obj(string filename)
 			facesParse.push_back(tmpFace);
 		}
 	}
+
+	float all_x = 0, all_y = 0, all_z = 0;
+	float count = 0;
+	for (auto i = verticesParse.begin(); i != verticesParse.end(); i++) {
+		all_x += (*i).x;
+		all_y += (*i).y;
+		all_z += (*i).z;
+		count++;
+	}
+
+	center_x = all_x / count;
+	center_y = all_y / count;
+	center_z = all_z / count;
+	cout << "[DEBUG] : center_x with barycenter -> " << center_x << "\n";
+	cout << "[DEBUG] : center_y with barycenter -> " << center_y << "\n";
+	cout << "[DEBUG] : center_z with barycenter -> " << center_z << "\n";
+
 	if (nameMtl.empty()) {
 		cout << "[DEBUG] : Failed to found .mtl\n";
 	}
