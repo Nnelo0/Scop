@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <limits.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -22,6 +23,7 @@ using namespace std;
 
 /*-------- Classes --------*/
 #include "Obj.hpp"
+#include "Shaders.hpp"
 
 /*-------- Functions -------*/
 

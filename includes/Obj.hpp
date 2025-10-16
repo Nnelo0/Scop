@@ -24,11 +24,13 @@ class Obj
 
 		vector<vertex> verticesParse;
 		vector<face> facesParse;
-		vector<float> vertices;
 		vector<unsigned int> faces;
+		vector<vertex> vertices;
 
-		double position[3] = {0.0, 0.0, 0.0};
-		float center_x, center_y, center_z;
+		double	position[3] = {0.0, 0.0, 0.0};
+		bool	toggleRotation = true;
+		bool	toggleTexture = false;
+		float	center_x, center_y, center_z;
 
 	public:
 		Obj(string filename);

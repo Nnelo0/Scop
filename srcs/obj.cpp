@@ -35,22 +35,6 @@ Obj::Obj(string filename)
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
 			line.erase(0, 2);
 			t_vertex tmp;
-			float colors;
-			switch (nextColors)
-			{
-				case 'b':
-					colors = 0.0f;
-					nextColors = 'g';
-					break;
-				case 'g':
-					colors = 0.5f;
-					nextColors = 'lg';
-					break;
-				case 'lg':
-					colors = 0.8f;
-					nextColors = 'b';
-					break;
-			}
 			for (size_t i = 0; i < 3; i++) {
 				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line + '!');
 				string tmpValue = line.substr(0, line.find_first_of(' '));
@@ -60,20 +44,18 @@ Obj::Obj(string filename)
 				}
 
 				double value = atof(tmpValue.c_str());
-				vertices.push_back(value);
-
 				switch (i) {
 					case 0:
 						tmp.x = value;
-						tmp.r = colors;
+						tmp.r = 0.0f;
 						break;
 					case 1:
 						tmp.y = value;
-						tmp.g = colors;
+						tmp.g = 0.0f;
 						break;
 					case 2:
 						tmp.z = value;
-						tmp.b = colors;
+						tmp.b = 0.0f;
 						break;
 				}
 			}
@@ -88,6 +70,22 @@ Obj::Obj(string filename)
 		if (line.find_first_of('f') == 0 && line.find_first_of(' ') == 1) {
 			line.erase(0, 2);
 			t_face tmpFace;
+			float colors;
+			switch (nextColors)
+			{
+				case 'b':
+					colors = 0.2f;
+					nextColors = 'g';
+					break;
+				case 'g':
+					colors = 0.3f;
+					nextColors = 'l';
+					break;
+				case 'l':
+					colors = 0.4f;
+					nextColors = 'b';
+					break;
+			}
 			for (size_t i = 0; i < 4; i++) {
 				if (line.empty()) continue;
 				if (i < 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Face -> " + line + '!');
@@ -102,18 +100,38 @@ Obj::Obj(string filename)
 					throw runtime_error("Failed to read Face -> " + line + '!');
 				if (tmpFace.vertexCount != 3)
 					faces.push_back(idx);
+				t_vertex tmpVertices;
 				switch (i) {
 					case 0:
 						tmpFace.v1 = idx;
 						tmpFace.vertexCount++;
+
+						tmpVertices = verticesParse[tmpFace.v1];
+						tmpVertices.r = colors;
+						tmpVertices.g = colors;
+						tmpVertices.b = colors;
+
+						vertices.push_back(tmpVertices);
 						break;
 					case 1:
 						tmpFace.v2 = idx;
 						tmpFace.vertexCount++;
+
+						tmpVertices = verticesParse[tmpFace.v2];
+						tmpVertices.r = colors;
+						tmpVertices.g = colors;
+						tmpVertices.b = colors;
+						vertices.push_back(tmpVertices);
 						break;
 					case 2:
 						tmpFace.v3 = idx;
 						tmpFace.vertexCount++;
+
+						tmpVertices = verticesParse[tmpFace.v3];
+						tmpVertices.r = colors;
+						tmpVertices.g = colors;
+						tmpVertices.b = colors;
+						vertices.push_back(tmpVertices);
 						break;
 					case 3:
 						tmpFace.v4 = idx;
@@ -121,17 +139,50 @@ Obj::Obj(string filename)
 						break;
 				}
 			}
+			t_vertex tmpVertices;
 			if (tmpFace.vertexCount == 4) {
 				faces.push_back(tmpFace.v1);
 				faces.push_back(tmpFace.v4);
 				faces.push_back(tmpFace.v3);
+
+				switch (nextColors)
+				{
+					case 'b':
+						colors = 0.2f;
+						nextColors = 'g';
+						break;
+					case 'g':
+						colors = 0.3f;
+						nextColors = 'l';
+						break;
+					case 'l':
+						colors = 0.4f;
+						nextColors = 'b';
+						break;
+				}
+
+				tmpVertices = verticesParse[tmpFace.v1];
+				tmpVertices.r = colors;
+				tmpVertices.g = colors;
+				tmpVertices.b = colors;
+				vertices.push_back(tmpVertices);
+				tmpVertices = verticesParse[tmpFace.v4];
+				tmpVertices.r = colors;
+				tmpVertices.g = colors;
+				tmpVertices.b = colors;
+				vertices.push_back(tmpVertices);
+				tmpVertices = verticesParse[tmpFace.v3];
+				tmpVertices.r = colors;
+				tmpVertices.g = colors;
+				tmpVertices.b = colors;
+				vertices.push_back(tmpVertices);
 				cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 			}
 
 			cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
-			cout << "TEST: " << verticesParse[tmpFace.v1].x << "\n"; // this help to rewrite vertices for each triangles (duplicate coord for vertex like f 2 3 4 take each coord for 2 3 4 and store in vector and f 4 5 3 take each coord to store in the same vector so we have 2 times the vertex 4, this is for colors of each triangles (faces))
 			cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
 			facesParse.push_back(tmpFace);
+
 		}
 	}
 
