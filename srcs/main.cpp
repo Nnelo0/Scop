@@ -98,42 +98,30 @@ int main(int argc, char **argv)
 			VBO (Vertex Buffer Object) -> (x, y, z)
 			EBO (Element Buffer Objet) -> (1, 2, 5) stock index of vertex to draw triangles
 		*/
-		unsigned int VAO, VBO, EBO;
+		unsigned int VAO, VBO;
 
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
 
 		glBindVertexArray(VAO);
 
 		// -- VBO --
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() *  sizeof(vertex), obj.vertices.data(), GL_STATIC_DRAW);
-		// glEnableClientState(GL_VERTEX_ARRAY);
-		// glVertexPointer(3, GL_FLOAT, sizeof(vertex), (void *)0);
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)0);
 		glEnableVertexAttribArray(0);
-		// obsolete
-		//	glEnableClientState(GL_COLOR_ARRAY);
-		//	glColorPointer(3, GL_FLOAT, sizeof(vertex), (void *)(3 * sizeof(float)));
 
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
-		// -- EBO --
-		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj.faces.size() * sizeof(unsigned int), obj.faces.data(), GL_STATIC_DRAW);
 
 		glBindVertexArray(0);
-
-		// glMatrixMode(GL_PROJECTION);
-		// glLoadIdentity();
-		// gluPerspective(45.0, 1920.0 / 1080.0, 0.1, 100.0); // FOV, aspect, near, far
 
 		double rotationAngle = 0.1;
 
 		glUseProgram(shader.shaderProgram);
 
-		Matrix proj = Matrix::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 100);
+		Matrix proj = Matrix::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 100); // FOV, aspect, near, far
 		Vec3 eye(0.0f, 0.0f, 6.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 		Matrix view = Matrix::lookAt(eye, center, up);
 
@@ -152,15 +140,8 @@ int main(int argc, char **argv)
 			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			// glMatrixMode(GL_MODELVIEW);
-			// glLoadIdentity();
-			// glTranslatef(0.0f, 0.0f, -6.0f);
-
-			// glPushMatrix();
-
-			// glTranslatef(obj.position[0], obj.position[1], obj.position[2]);
 			if (obj.toggleRotation) {
-				rotationAngle += 0.03f;
+				rotationAngle += 0.02f;
 			}
 
 			// cout << "[DEBUG] : VIEW -> \n" << view << endl;
@@ -169,25 +150,11 @@ int main(int argc, char **argv)
 			Matrix Tcenter = Matrix::translate(obj.center_x, obj.center_y, obj.center_z);
 			Matrix R = Matrix::rotateY(rotationAngle);
 			Matrix model = Tpos * Tcenter * R * Matrix::translate(-obj.center_x, -obj.center_y, -obj.center_z);
-			// glTranslatef(obj.center_x, obj.center_y, obj.center_z);
-			// glRotatef(rotationAngle * 30.0f, 0.0f, 1.0f, 0.0f);
-			// glTranslatef(-obj.center_x, -obj.center_y, -obj.center_z);
 
-			glUseProgram(shader.shaderProgram);
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data());
 
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, obj.vertices.size());
-
-			//-- DEBUG --
-			// glPointSize(20.0f);
-			// glColor3f(1.0f, 0.0f, 0.0f);
-			// glBegin(GL_POINTS);
-			// 	glVertex3d(obj.center_x, obj.center_y, obj.center_z);
-			// glEnd();
-			//-- DEBUG --
-
-			// glPopMatrix();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();
