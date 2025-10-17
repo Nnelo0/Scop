@@ -32,5 +32,6 @@ using namespace std;
 #include "Matrix.hpp"
 
 /*-------- Functions -------*/
+GLuint loadTexture(const char *path);
 
 /*-------- Defines --------*/

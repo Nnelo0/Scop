@@ -1,13 +1,5 @@
 #include "Obj.hpp"
 
-vertex Obj::getVertexFromVertices(int idx)
-{
-	if (verticesParse.size() < idx) {
-		out_of_range("Invalid idx for face");
-	}
-	return verticesParse[idx];
-}
-
 Obj::Obj(string filename)
 {
 	string line;
@@ -215,6 +207,19 @@ Obj::Obj(string filename)
 	objFile.close();
 }
 
-Obj::~Obj()
+Obj::~Obj() {}
+
+void Obj::generateUVs(vector<vertex> &verts)
 {
+	for (auto &v : verts)  {
+		float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+		if (len == 0.0f) len = 1.0f;
+
+		float nx = v.x / len;
+		float ny = v.y / len;
+		float nz = v.z / len;
+
+		v.u = 0.5f + atan2(nz, nx) / (2.0f * M_PI);
+		v.v = 0.5f -asin(ny) / M_PI;
+	}
 }

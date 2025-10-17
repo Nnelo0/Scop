@@ -5,6 +5,7 @@ typedef struct vertex
 {
 	float x,y,z;
 	float r, g, b;
+	float u, v;
 } t_vertex;
 
 typedef struct face
@@ -34,6 +35,7 @@ class Obj
 
 	public:
 		Obj(string filename);
-		vertex getVertexFromVertices(int idx);
 		~Obj();
+
+		void generateUVs(vector<vertex> &verts);
 };

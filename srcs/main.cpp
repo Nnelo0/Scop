@@ -27,7 +27,7 @@ void processInput(GLFWwindow *window, Obj &obj)
 		obj.toggleRotation = !obj.toggleRotation;
 	}
 
-	if (TPressedLastFrame && !TPressedLastFrame) {
+	if (TPressedNow && !TPressedLastFrame) {
 		obj.toggleTexture = !obj.toggleTexture;
 	}
 
@@ -40,6 +40,7 @@ int main(int argc, char **argv)
 	try
 	{
 		Obj obj(argv[1]);
+		obj.generateUVs(obj.vertices);
 		cout << "[DEBUG] faces -> \n";
 		int j = 0;
 		for (auto i = obj.faces.begin(); i != obj.faces.end(); i++)
@@ -109,11 +110,17 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() *  sizeof(vertex), obj.vertices.data(), GL_STATIC_DRAW);
 
+		//vertex
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)0);
 		glEnableVertexAttribArray(0);
 
+		//color
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
+
+		// UV textures
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
 
 		glBindVertexArray(0);
 
@@ -134,7 +141,16 @@ int main(int argc, char **argv)
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj.data());
 
+		GLuint texture = loadTexture(argv[2]);
+		// glUseProgram(shader.shaderProgram);
+		glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), 0);
 		while (!glfwWindowShouldClose(window)) {
+			// if (obj.toggleTexture) {
+			// 	cout << "[DEBUG] : Texture actived" << endl;
+			// } else {
+			// 	cout << "[DEBUG] : Texture disabled" << endl;
+			// }
+
 			processInput(window, obj);
 
 			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
@@ -143,6 +159,12 @@ int main(int argc, char **argv)
 			if (obj.toggleRotation) {
 				rotationAngle += 0.02f;
 			}
+
+			glUseProgram(shader.shaderProgram);
+			glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), obj.toggleTexture);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
 
 			// cout << "[DEBUG] : VIEW -> \n" << view << endl;
 			// cout << "[DEBUG] : POS -> " << obj.position[0] << ", " <<  obj.position[1] << ", " << obj.position[2] << endl;
