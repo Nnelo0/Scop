@@ -1,4 +1,4 @@
-#include "all.hpp"
+#include "Shaders.hpp"
 
 string Shaders::readShaderFile(string filePath)
 {

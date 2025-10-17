@@ -81,12 +81,12 @@ int main(int argc, char **argv)
 			return -1;
 		}
 		glfwMakeContextCurrent(window);
-		
+
 		if (glewInit() != GLEW_OK) {
 			std::cerr << "failed to initialize Glew\n";
 			return -1;
 		}
-		
+
 		glViewport(0, 0, 1920, 1080);
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glEnable(GL_DEPTH_TEST);
@@ -131,24 +131,22 @@ int main(int argc, char **argv)
 
 		double rotationAngle = 0.1;
 
-		float identity[16] = {
-		    1,0,0,0,
-		    0,1,0,0,
-		    0,0,1,0,
-		    0,0,0,1
-		};
-
 		glUseProgram(shader.shaderProgram);
+
+		Matrix proj = Matrix::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 100);
+		Vec3 eye(0.0f, 0.0f, 6.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+		Matrix view = Matrix::lookAt(eye, center, up);
 
 		GLint modelLoc = glGetUniformLocation(shader.shaderProgram, "uModel");
 		GLint viewLoc = glGetUniformLocation(shader.shaderProgram, "uView");
 		GLint projLoc = glGetUniformLocation(shader.shaderProgram, "uProjection");
 
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, identity);
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, identity);
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, identity);
+		Matrix identity = Matrix::identity();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, identity.data());
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj.data());
+
 		while (!glfwWindowShouldClose(window)) {
-			
 			processInput(window, obj);
 
 			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
@@ -158,19 +156,27 @@ int main(int argc, char **argv)
 			// glLoadIdentity();
 			// glTranslatef(0.0f, 0.0f, -6.0f);
 
-			glUseProgram(shader.shaderProgram);
-			glBindVertexArray(VAO);
 			// glPushMatrix();
 
 			// glTranslatef(obj.position[0], obj.position[1], obj.position[2]);
 			if (obj.toggleRotation) {
-				rotationAngle += 0.05f;
+				rotationAngle += 0.03f;
 			}
 
+			// cout << "[DEBUG] : VIEW -> \n" << view << endl;
+			// cout << "[DEBUG] : POS -> " << obj.position[0] << ", " <<  obj.position[1] << ", " << obj.position[2] << endl;
+			Matrix Tpos = Matrix::translate(obj.position[0], obj.position[1], obj.position[2]);
+			Matrix Tcenter = Matrix::translate(obj.center_x, obj.center_y, obj.center_z);
+			Matrix R = Matrix::rotateY(rotationAngle);
+			Matrix model = Tpos * Tcenter * R * Matrix::translate(-obj.center_x, -obj.center_y, -obj.center_z);
 			// glTranslatef(obj.center_x, obj.center_y, obj.center_z);
 			// glRotatef(rotationAngle * 30.0f, 0.0f, 1.0f, 0.0f);
 			// glTranslatef(-obj.center_x, -obj.center_y, -obj.center_z);
 
+			glUseProgram(shader.shaderProgram);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data());
+
+			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, obj.vertices.size());
 
 			//-- DEBUG --

@@ -6,6 +6,10 @@
 #include <fstream>
 #include <sstream>
 #include <limits.h>
+#include <array>
+#include <cmath>
+#include <iomanip>
+#include <cassert>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -24,6 +28,8 @@ using namespace std;
 /*-------- Classes --------*/
 #include "Obj.hpp"
 #include "Shaders.hpp"
+#include "Vec3.hpp"
+#include "Matrix.hpp"
 
 /*-------- Functions -------*/
 

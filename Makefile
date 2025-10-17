@@ -10,7 +10,7 @@ INCLUDES = -Iincludes
 
 OBJDIR = obj
 
-SRCS = srcs/main.cpp srcs/obj.cpp srcs/Shaders.cpp
+SRCS = srcs/main.cpp srcs/Obj.cpp srcs/Shaders.cpp srcs/Vec3.cpp srcs/Matrix.cpp
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 OBJS := $(OBJS:%.c=$(OBJDIR)/%.o)
 
