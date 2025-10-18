@@ -17,7 +17,7 @@ The object can move along the three axes in both directions.
 [✅] - Add smooth textures
 
 # bonuses
-[] - A GUI to display fps, triangles in the scene, and some useful info
+[✅] - A GUI to display fps, triangles in the scene, and some useful info
 [] - Another GUI to change rotation speed or texture
 [] - Add better camera controls to move within the scene
 [] - Be able to add more than one object

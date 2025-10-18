@@ -2,6 +2,9 @@
 
 bool	spacePressedLastFrame = false;
 bool	TPressedLastFrame = false;
+bool	TabPressedLastFrame = false;
+
+bool	showDebugWindow = false;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
 {
@@ -40,6 +43,13 @@ void processInput(GLFWwindow *window, Obj &obj)
 	}
 
 	TPressedLastFrame = TPressedNow;
+
+	bool TabPressedNow = glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS;
+	if (TabPressedNow && !TabPressedLastFrame) {
+		showDebugWindow = !showDebugWindow;
+	}
+
+	TabPressedLastFrame = TabPressedNow;
 }
 
 int main(int argc, char **argv)
@@ -47,6 +57,7 @@ int main(int argc, char **argv)
 	try
 	{
 		Obj obj(argv[1]);
+		int triangleCount = obj.faces.size() / 3;
 		obj.generateUVs(obj.vertices);
 		cout << "[DEBUG] faces -> \n";
 		int j = 0;
@@ -99,6 +110,12 @@ int main(int argc, char **argv)
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glEnable(GL_DEPTH_TEST);
 
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 460");
 		Shaders shader("shaders/vertex.vert", "shaders/fragment.frag");
 
 		/*
@@ -166,6 +183,17 @@ int main(int argc, char **argv)
 			glClearColor(0.4f ,0.3f, 0.69f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+			if (showDebugWindow) {
+				ImGui::Begin("Debug");
+				ImGui::Text("FPS: %.1f", io.Framerate);
+				ImGui::Text("Render time: %.2f ms", 1000.0f / io.Framerate);
+				ImGui::Text("Triangles: %d", triangleCount);
+				ImGui::End();
+			}
+
 			if (obj.toggleRotation) {
 				rotationAngle += 0.02f;
 			}
@@ -190,10 +218,15 @@ int main(int argc, char **argv)
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, obj.vertices.size());
 
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
 
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 		glfwTerminate();
 	}
 	catch(const std::exception& e)
