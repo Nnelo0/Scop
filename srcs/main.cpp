@@ -128,8 +128,8 @@ int main(int argc, char **argv)
 
 		glUseProgram(shader.shaderProgram);
 
-		Matrix proj = Matrix::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 100); // FOV, aspect, near, far
-		Vec3 eye(0.0f, 0.0f, 6.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+		Matrix proj = Matrix::perspective(90.0f, 1920.0f / 1080.0f, 0.1f, 1024); // FOV, aspect, near, far
+		Vec3 eye(0.0f, 0.0f, 10.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 		Matrix view = Matrix::lookAt(eye, center, up);
 
 		GLint modelLoc = glGetUniformLocation(shader.shaderProgram, "uModel");
@@ -141,9 +141,12 @@ int main(int argc, char **argv)
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj.data());
 
-		GLuint texture = loadTexture(argv[2]);
-		// glUseProgram(shader.shaderProgram);
-		glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), 0);
+		GLuint texture;
+		if (argc == 3) {
+			texture = loadTexture(argv[2]);
+			glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), 0);
+		}
+
 		while (!glfwWindowShouldClose(window)) {
 			// if (obj.toggleTexture) {
 			// 	cout << "[DEBUG] : Texture actived" << endl;
@@ -153,25 +156,27 @@ int main(int argc, char **argv)
 
 			processInput(window, obj);
 
-			glClearColor(0.8f ,0.3f, 0.69f, 1.0f);
+			glClearColor(0.4f ,0.3f, 0.69f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			if (obj.toggleRotation) {
 				rotationAngle += 0.02f;
 			}
 
-			glUseProgram(shader.shaderProgram);
-			glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), obj.toggleTexture);
+			if (argc == 3) {
+				glUseProgram(shader.shaderProgram);
+				glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), obj.toggleTexture);
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+			}
 
 			// cout << "[DEBUG] : VIEW -> \n" << view << endl;
 			// cout << "[DEBUG] : POS -> " << obj.position[0] << ", " <<  obj.position[1] << ", " << obj.position[2] << endl;
 			Matrix Tpos = Matrix::translate(obj.position[0], obj.position[1], obj.position[2]);
-			Matrix Tcenter = Matrix::translate(obj.center_x, obj.center_y, obj.center_z);
+			Matrix Tcenter = Matrix::translate(obj.centerX, obj.centerY, obj.centerZ);
 			Matrix R = Matrix::rotateY(rotationAngle);
-			Matrix model = Tpos * Tcenter * R * Matrix::translate(-obj.center_x, -obj.center_y, -obj.center_z);
+			Matrix model = Tpos * Tcenter * R * Matrix::translate(-obj.centerX, -obj.centerY, -obj.centerZ);
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data());
 

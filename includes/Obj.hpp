@@ -31,7 +31,7 @@ class Obj
 		double	position[3] = {0.0, 0.0, 0.0};
 		bool	toggleRotation = true;
 		bool	toggleTexture = false;
-		float	center_x, center_y, center_z;
+		float	centerX, centerY, centerZ;
 
 	public:
 		Obj(string filename);

@@ -5,7 +5,7 @@
 class Vec3
 {
 	public:
-		float _x, _y, _z;
+		float x, y, z;
 	public:
 
 		Vec3(/* args */);

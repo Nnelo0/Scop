@@ -178,21 +178,21 @@ Obj::Obj(string filename)
 		}
 	}
 
-	float all_x = 0, all_y = 0, all_z = 0;
+	float allx = 0, ally = 0, allz = 0;
 	float count = 0;
 	for (auto i = verticesParse.begin(); i != verticesParse.end(); i++) {
-		all_x += (*i).x;
-		all_y += (*i).y;
-		all_z += (*i).z;
+		allx += (*i).x;
+		ally += (*i).y;
+		allz += (*i).z;
 		count++;
 	}
 
-	center_x = all_x / count;
-	center_y = all_y / count;
-	center_z = all_z / count;
-	cout << "[DEBUG] : center_x with barycenter -> " << center_x << "\n";
-	cout << "[DEBUG] : center_y with barycenter -> " << center_y << "\n";
-	cout << "[DEBUG] : center_z with barycenter -> " << center_z << "\n";
+	centerX = allx / count;
+	centerY = ally / count;
+	centerZ = allz / count;
+	cout << "[DEBUG] : centerx with barycenter -> " << centerX << "\n";
+	cout << "[DEBUG] : centery with barycenter -> " << centerY << "\n";
+	cout << "[DEBUG] : centerz with barycenter -> " << centerZ << "\n";
 
 	if (nameMtl.empty()) {
 		cout << "[DEBUG] : Failed to found .mtl\n";
@@ -209,17 +209,57 @@ Obj::Obj(string filename)
 
 Obj::~Obj() {}
 
+Vec3 computeNormal(vertex a, vertex b, vertex c)
+{
+	Vec3 u = {b.x - a.x, b.y - a.y, b.z - a.z};
+	Vec3 v = {c.x - a.x, c.y - a.y, c.z - a.z};
+
+	return Vec3::cross(u, v).normalized();
+}
+
 void Obj::generateUVs(vector<vertex> &verts)
 {
-	for (auto &v : verts)  {
-		float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-		if (len == 0.0f) len = 1.0f;
 
-		float nx = v.x / len;
-		float ny = v.y / len;
-		float nz = v.z / len;
-
-		v.u = 0.5f + atan2(nz, nx) / (2.0f * M_PI);
-		v.v = 0.5f -asin(ny) / M_PI;
+	float minX = __FLT_MAX__, maxX = -__FLT_MAX__;
+	float minY = __FLT_MAX__, maxY = -__FLT_MAX__;
+	float minZ = __FLT_MAX__, maxZ = -__FLT_MAX__;
+	for (auto &v : verts) {
+		if (v.x < minX) minX = v.x;
+		if (v.x > maxX) maxX = v.x;
+		if (v.y < minY) minY = v.y;
+		if (v.y > maxY) maxY = v.y;
+		if (v.z < minZ) minZ = v.z;
+		if (v.z > maxZ) maxZ = v.z;
 	}
+
+	float sizeX = maxX - minX;
+	float sizeY = maxY - minY;
+	float sizeZ = maxZ - minZ;
+
+	for (size_t i = 0; i < verts.size(); i += 3) {
+		vertex &a = verts[i];
+		vertex &b = verts[i + 1];
+		vertex &c = verts[i + 2];
+
+		Vec3 n = computeNormal(a, b ,c);
+		float absX = fabs(n.x);
+		float absY = fabs(n.y);
+		float absZ = fabs(n.z);
+
+		for (vertex *v : {&a, &b, &c}) {
+			if (absX >= absY && absX >= absZ) {
+				v->u = (v->z - minZ) / sizeZ;
+				v->v = (v->y - minY) / sizeY;
+			}
+			else if (absY >= absX && absY >= absZ) {
+				v->u = (v->x - minX) / sizeX;
+				v->v = (v->z - minZ) / sizeZ;
+			}
+			else {
+				v->u = (v->x - minX) / sizeX;
+				v->v = (v->y - minX) / sizeZ;
+			}
+		}
+	}
+
 }
