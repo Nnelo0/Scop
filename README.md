@@ -14,7 +14,7 @@ The object can move along the three axes in both directions.
 [✅] - Rotate this object around itself
 [✅] - Move the object
 [✅] - Add colors to show different aspects of the object
-[] - Add smooth textures
+[✅] - Add smooth textures
 
 # bonuses
 [] - A GUI to display fps, triangles in the scene, and some useful info

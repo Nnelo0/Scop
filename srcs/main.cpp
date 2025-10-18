@@ -11,28 +11,35 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
 
 void processInput(GLFWwindow *window, Obj &obj)
 {
+	//close window
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	//move object
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) obj.position[0] -= 0.2;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) obj.position[0] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) obj.position[1] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) obj.position[1] -= 0.2;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) obj.position[2] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) obj.position[2] -= 0.2;
-	bool SpacePressedNow = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-	bool TPressedNow = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;
+	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS) obj.position[1] += 0.2;
+	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) obj.position[1] -= 0.2;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) obj.position[2] += 0.2;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) obj.position[2] -= 0.2;
 
+	// if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) obj.position[2] += 0.2;
+	// if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) obj.position[2] -= 0.2;
+
+	// stop rotating object
+	bool SpacePressedNow = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	if (SpacePressedNow && !spacePressedLastFrame) {
 		obj.toggleRotation = !obj.toggleRotation;
 	}
+	spacePressedLastFrame = SpacePressedNow;
 
+	// toggle Texture
+	bool TPressedNow = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;
 	if (TPressedNow && !TPressedLastFrame) {
 		obj.toggleTexture = !obj.toggleTexture;
 	}
 
 	TPressedLastFrame = TPressedNow;
-	spacePressedLastFrame = SpacePressedNow;
 }
 
 int main(int argc, char **argv)
