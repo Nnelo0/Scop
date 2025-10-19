@@ -44,7 +44,6 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
-	$(RM) imgui.ini
 	@echo "\033[31m✔ $(NAME) suppressed\033[0m"
 
 re: fclean all

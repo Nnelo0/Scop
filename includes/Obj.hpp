@@ -28,7 +28,8 @@ class Obj
 		vector<unsigned int> faces;
 		vector<vertex> vertices;
 
-		double	position[3] = {0.0, 0.0, 0.0};
+		float	position[3] = {0.0f, 0.0f, 0.0f};
+		float	rotation[3] = {0.0f, 0.0f, 0.0f};
 		bool	toggleRotation = true;
 		bool	toggleTexture = false;
 		float	centerX, centerY, centerZ;

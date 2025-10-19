@@ -1,5 +1,7 @@
 #include "all.hpp"
 
+float	BackgroundColors[3] = {0.4f , 0.3f, 0.69f};
+
 bool	spacePressedLastFrame = false;
 bool	TPressedLastFrame = false;
 bool	TabPressedLastFrame = false;
@@ -100,6 +102,7 @@ int main(int argc, char **argv)
 			return -1;
 		}
 		glfwMakeContextCurrent(window);
+		// glfwSwapInterval(0); this is fun...
 
 		if (glewInit() != GLEW_OK) {
 			std::cerr << "failed to initialize Glew\n";
@@ -153,7 +156,7 @@ int main(int argc, char **argv)
 		glUseProgram(shader.shaderProgram);
 
 		Matrix proj = Matrix::perspective(90.0f, 1920.0f / 1080.0f, 0.1f, 1024); // FOV, aspect, near, far
-		Vec3 eye(0.0f, 0.0f, 10.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+		Vec3 eye(0.0f, 0.0f, 7.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
 		Matrix view = Matrix::lookAt(eye, center, up);
 
 		GLint modelLoc = glGetUniformLocation(shader.shaderProgram, "uModel");
@@ -180,22 +183,42 @@ int main(int argc, char **argv)
 
 			processInput(window, obj);
 
-			glClearColor(0.4f ,0.3f, 0.69f, 1.0f);
+			glClearColor(BackgroundColors[0], BackgroundColors[1], BackgroundColors[2], 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 			if (showDebugWindow) {
-				ImGui::Begin("Debug");
+				ImGui::Begin("Tooltip");
+				ImGui::SeparatorText("Debug");
 				ImGui::Text("FPS: %.1f", io.Framerate);
 				ImGui::Text("Render time: %.2f ms", 1000.0f / io.Framerate);
 				ImGui::Text("Triangles: %d", triangleCount);
+				ImGui::SeparatorText("Transform");
+				ImGui::SliderFloat3("Position (X,Y,Z)", obj.position, -10.0f, 10.0f);
+				ImGui::SliderFloat3("Rotation (X,Y,Z)", obj.rotation, 0.0f, 10.0f);
+				if (ImGui::Button("Reset")) {
+					obj.position[0] = 0.0f;
+					obj.position[1] = 0.0f;
+					obj.position[2] = 0.0f;
+
+					obj.rotation[0] = 0.0f;
+					obj.rotation[1] = 0.0f;
+					obj.rotation[2] = 0.0f;
+				}
+
+				ImGui::SeparatorText("Appearance");
+				ImGui::ColorEdit3("R,G,B", BackgroundColors);
+				if (argc == 3)
+					ImGui::Checkbox("Use Texture", &obj.toggleTexture);
 				ImGui::End();
 			}
 
 			if (obj.toggleRotation) {
-				rotationAngle += 0.02f;
+				if (obj.rotation[1] >= 12.6f)
+					obj.rotation[1] = 0.0f;
+				obj.rotation[1] += 0.02f;
 			}
 
 			if (argc == 3) {
@@ -210,8 +233,11 @@ int main(int argc, char **argv)
 			// cout << "[DEBUG] : POS -> " << obj.position[0] << ", " <<  obj.position[1] << ", " << obj.position[2] << endl;
 			Matrix Tpos = Matrix::translate(obj.position[0], obj.position[1], obj.position[2]);
 			Matrix Tcenter = Matrix::translate(obj.centerX, obj.centerY, obj.centerZ);
-			Matrix R = Matrix::rotateY(rotationAngle);
-			Matrix model = Tpos * Tcenter * R * Matrix::translate(-obj.centerX, -obj.centerY, -obj.centerZ);
+			Matrix Rx = Matrix::rotateX(obj.rotation[0]);
+			Matrix Ry = Matrix::rotateY(obj.rotation[1]);
+			Matrix Rz = Matrix::rotateZ(obj.rotation[2]);
+
+			Matrix model = Tpos * Tcenter * Rx * Ry * Rz * Matrix::translate(-obj.centerX, -obj.centerY, -obj.centerZ);
 
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data());
 

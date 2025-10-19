@@ -220,9 +220,9 @@ Vec3 computeNormal(vertex a, vertex b, vertex c)
 void Obj::generateUVs(vector<vertex> &verts)
 {
 
-	float minX = __FLT_MAX__, maxX = -__FLT_MAX__;
-	float minY = __FLT_MAX__, maxY = -__FLT_MAX__;
-	float minZ = __FLT_MAX__, maxZ = -__FLT_MAX__;
+	float minX = FLT_MAX, maxX = -FLT_MAX;
+	float minY = FLT_MAX, maxY = -FLT_MAX;
+	float minZ = FLT_MAX, maxZ = -FLT_MAX;
 	for (auto &v : verts) {
 		if (v.x < minX) minX = v.x;
 		if (v.x > maxX) maxX = v.x;
