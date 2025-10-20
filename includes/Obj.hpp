@@ -17,12 +17,12 @@ typedef struct face
 class Obj
 {
 	private:
-		string name;
 		string nameMtl;
 		string sMode;
 
 	public:
 
+		string name;
 		vector<vertex> verticesParse;
 		vector<face> facesParse;
 		vector<unsigned int> faces;
@@ -33,6 +33,8 @@ class Obj
 		bool	toggleRotation = true;
 		bool	toggleTexture = false;
 		float	centerX, centerY, centerZ;
+		bool	hasTexture = false;
+		long	triangleCount;
 
 	public:
 		Obj(string filename);

@@ -12,16 +12,16 @@ Obj::Obj(string filename)
 		if (line.find_first_of('#') != string::npos) {
 			line = line.substr(0, line.find_first_of('#'));
 		}
-		cout << "[DEBUG] : line -> [" + line + ']' << endl;
+		// cout << "[DEBUG] : line -> [" + line + ']' << endl;
 
 		if (line.find("mtllib") != string::npos) {
 			nameMtl = line.substr(strlen("mtllib"), line.length());
-			cout << "[DEBUG] : nameMtl -> " + nameMtl << endl;
+			// cout << "[DEBUG] : nameMtl -> " + nameMtl << endl;
 		}
 
 		if (line.find_first_of('o') == 0  && line.find_first_of(' ') == 1) {
 			name = line.substr(1, line.length());
-			cout << "[DEBUG] : name -> " + name << endl;
+			// cout << "[DEBUG] : name -> " + name << endl;
 		}
 
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
@@ -56,7 +56,7 @@ Obj::Obj(string filename)
 
 		if (line.find_first_of('s') == 0 && line.find_first_of(' ') == 1) {
 			sMode = line.substr(2, line.length());
-			cout << "[DEBUG] : S -> " + sMode << endl;
+			// cout << "[DEBUG] : S -> " + sMode << endl;
 		}
 
 		if (line.find_first_of('f') == 0 && line.find_first_of(' ') == 1) {
@@ -168,11 +168,11 @@ Obj::Obj(string filename)
 				tmpVertices.g = colors;
 				tmpVertices.b = colors;
 				vertices.push_back(tmpVertices);
-				cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
+				// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 			}
 
-			cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
-			cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
+			// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
+			// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
 			facesParse.push_back(tmpFace);
 
 		}
@@ -190,20 +190,21 @@ Obj::Obj(string filename)
 	centerX = allx / count;
 	centerY = ally / count;
 	centerZ = allz / count;
-	cout << "[DEBUG] : centerx with barycenter -> " << centerX << "\n";
-	cout << "[DEBUG] : centery with barycenter -> " << centerY << "\n";
-	cout << "[DEBUG] : centerz with barycenter -> " << centerZ << "\n";
+	// cout << "[DEBUG] : centerx with barycenter -> " << centerX << "\n";
+	// cout << "[DEBUG] : centery with barycenter -> " << centerY << "\n";
+	// cout << "[DEBUG] : centerz with barycenter -> " << centerZ << "\n";
 
 	if (nameMtl.empty()) {
-		cout << "[DEBUG] : Failed to found .mtl\n";
+		cout << YELLOW "[WARNING] : Failed to found .mtl\n" RESET;
 	}
 	if (name.empty()) {
-		cout << "[DEBUG] : Failed to found .mtl\n";
+		cout << YELLOW "[WARNING] : Failed to found Name\n" RESET;
 	}
 
 	if (facesParse.empty() || verticesParse.empty() || faces.empty() || vertices.empty())
 		throw runtime_error("Failed to parse .obj files");
 
+	triangleCount = faces.size() / 3;
 	objFile.close();
 }
 
@@ -261,5 +262,4 @@ void Obj::generateUVs(vector<vertex> &verts)
 			}
 		}
 	}
-
 }

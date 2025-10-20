@@ -10,7 +10,15 @@ INCLUDES = -I./includes
 
 OBJDIR = obj
 
-SRCS =	srcs/main.cpp srcs/Obj.cpp srcs/Shaders.cpp srcs/Vec3.cpp srcs/Matrix.cpp srcs/Texture.cpp \
+SRCS =	srcs/main.cpp \
+		srcs/Obj.cpp \
+		srcs/Shaders.cpp \
+		srcs/Vec3.cpp \
+		srcs/Matrix.cpp \
+		srcs/Texture.cpp \
+		srcs/Window.cpp \
+		srcs/TooltipInfo.cpp \
+		srcs/Render.cpp \
 		includes/imgui/imgui.cpp \
 		includes/imgui/imgui_draw.cpp \
 		includes/imgui/imgui_impl_glfw.cpp \

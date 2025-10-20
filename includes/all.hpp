@@ -38,12 +38,42 @@
 using namespace std;
 
 /*-------- Classes --------*/
+class Obj;
 #include "Obj.hpp"
 #include "Shaders.hpp"
 #include "Vec3.hpp"
 #include "Matrix.hpp"
 
+/*-------- Structures --------*/
+
+struct WindowInfo
+{
+	float	BackgroundColors[3];
+
+	bool	spacePressedLastFrame;
+	bool	TPressedLastFrame;
+	bool	TabPressedLastFrame;
+
+	bool	showDebugWindow;
+};
+
 /*-------- Functions -------*/
+
+
 GLuint loadTexture(const char *path);
+
+void 		processInput(GLFWwindow *window, Obj &obj, WindowInfo &windowInfo);
+GLFWwindow*	initWindow(string nameWindow);
+void		initWindowInfo(WindowInfo &windowInfo);
+
+ImGuiIO&	initImGui(GLFWwindow *window);
+void		FrameImGui();
+void		OptionImGui(Obj &obj, WindowInfo &windowInfo, ImGuiIO& io);
+void		renderImGui();
+void		ShutdownImGui();
+
+unsigned int	initBuffers(Obj &obj);
+void			render(Obj &obj, unsigned int &VAO, GLint &modelLoc);
+GLint			matrixParameters(Shaders &shader);
 
 /*-------- Defines --------*/
