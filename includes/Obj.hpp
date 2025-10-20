@@ -35,10 +35,12 @@ class Obj
 		float	centerX, centerY, centerZ;
 		bool	hasTexture = false;
 		long	triangleCount;
+		float	speed;
 
 	public:
 		Obj(string filename);
 		~Obj();
 
-		void generateUVs(vector<vertex> &verts);
+		void	generateUVs(vector<vertex> &verts);
+		void	objectInput(GLFWwindow *window, WindowInfo &windowInfo);
 };

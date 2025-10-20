@@ -35,25 +35,23 @@ unsigned int initBuffers(Obj &obj)
 	return VAO;
 }
 
-GLint matrixParameters(Shaders &shader)
+void matrixParameters(Shaders &shader)
 {
 	glUseProgram(shader.shaderProgram);
 
 	Matrix proj = Matrix::perspective(90.0f, 1920.0f / 1080.0f, 0.1f, 102400); // FOV, aspect, near, far
-	Vec3 eye(0.0f, 0.0f, 7.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
-	Matrix view = Matrix::lookAt(eye, center, up);
+	// Vec3 eye(0.0f, 0.0f, 7.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+	// Matrix view = Matrix::lookAt(eye, center, up);
 
-	GLint modelLoc = glGetUniformLocation(shader.shaderProgram, "uModel");
-	GLint viewLoc = glGetUniformLocation(shader.shaderProgram, "uView");
+	// GLint viewLoc = glGetUniformLocation(shader.shaderProgram, "uView");
 	GLint projLoc = glGetUniformLocation(shader.shaderProgram, "uProjection");
 
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
+	// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj.data());
 
-	return modelLoc;
 }
 
-void render(Obj &obj, unsigned int &VAO, GLint &modelLoc)
+void render(Obj &obj, unsigned int &VAO, Shaders &shader)
 {
 	Matrix Tpos = Matrix::translate(obj.position[0], obj.position[1], obj.position[2]);
 	Matrix Tcenter = Matrix::translate(obj.centerX, obj.centerY, obj.centerZ);
@@ -62,8 +60,9 @@ void render(Obj &obj, unsigned int &VAO, GLint &modelLoc)
 	Matrix Rz = Matrix::rotateZ(obj.rotation[2]);
 	Matrix model = Tpos * Tcenter * Rx * Ry * Rz * Matrix::translate(-obj.centerX, -obj.centerY, -obj.centerZ);
 
+	GLint modelLoc = glGetUniformLocation(shader.shaderProgram, "uModel");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data());
 	glBindVertexArray(VAO);
-	
+
 	glDrawArrays(GL_TRIANGLES, 0, obj.vertices.size());
 }

@@ -12,8 +12,6 @@
 #include <limits.h>
 #include <array>
 #include <cmath>
-#include <iomanip>
-#include <cassert>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "imgui/imgui.h"
@@ -37,43 +35,44 @@
 /*-------- Namespace -------*/
 using namespace std;
 
-/*-------- Classes --------*/
-class Obj;
-#include "Obj.hpp"
-#include "Shaders.hpp"
-#include "Vec3.hpp"
-#include "Matrix.hpp"
-
 /*-------- Structures --------*/
 
 struct WindowInfo
 {
 	float	BackgroundColors[3];
 
-	bool	spacePressedLastFrame;
+	bool	pPressedLastFrame;
 	bool	TPressedLastFrame;
 	bool	TabPressedLastFrame;
 
 	bool	showDebugWindow;
 };
 
+/*-------- Classes --------*/
+class Obj;
+class Shaders;
+#include "Obj.hpp"
+#include "Shaders.hpp"
+#include "Vec3.hpp"
+#include "Matrix.hpp"
+#include "Camera.hpp"
+
 /*-------- Functions -------*/
 
+GLuint 			loadTexture(const char *path);
 
-GLuint loadTexture(const char *path);
+void 			processInput(GLFWwindow *window, Obj &obj, Camera &cam, WindowInfo &windowInfo);
+GLFWwindow*		initWindow(string nameWindow);
+void			initWindowInfo(WindowInfo &windowInfo);
 
-void 		processInput(GLFWwindow *window, Obj &obj, WindowInfo &windowInfo);
-GLFWwindow*	initWindow(string nameWindow);
-void		initWindowInfo(WindowInfo &windowInfo);
-
-ImGuiIO&	initImGui(GLFWwindow *window);
-void		FrameImGui();
-void		OptionImGui(Obj &obj, WindowInfo &windowInfo, ImGuiIO& io);
-void		renderImGui();
-void		ShutdownImGui();
+ImGuiIO&		initImGui(GLFWwindow *window);
+void			FrameImGui();
+void			OptionImGui(Obj &obj, WindowInfo &windowInfo, ImGuiIO& io);
+void			renderImGui();
+void			ShutdownImGui();
 
 unsigned int	initBuffers(Obj &obj);
-void			render(Obj &obj, unsigned int &VAO, GLint &modelLoc);
-GLint			matrixParameters(Shaders &shader);
+void			render(Obj &obj, unsigned int &VAO, Shaders &shader);
+void			matrixParameters(Shaders &shader);
 
 /*-------- Defines --------*/

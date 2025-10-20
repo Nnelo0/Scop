@@ -1,6 +1,9 @@
 #pragma once
+#include <iostream>
+#include <cmath>
+#include <fstream>
 
-#include "all.hpp"
+using namespace std;
 
 class Vec3
 {

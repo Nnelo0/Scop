@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 		glBindVertexArray(0);
 
 		Shaders shader("shaders/vertex.vert", "shaders/fragment.frag");
-		GLint modelLoc = matrixParameters(shader);
+		matrixParameters(shader);
 
 		GLuint texture;
 		if (argc == 3) {
@@ -31,19 +31,39 @@ int main(int argc, char **argv)
 			glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), 0);
 		}
 
-		// cout	<< "┌----------------------------------------┐"
-		// 		<< "|                Commands                |"
-		// 		<< "|   Movements :                          |"
-		// 		<< "|  	  - ↑                                |"
-		// 		<< "|  	  - ↓                                |"
-		// 		<< "|  	  - →                                |"
-		// 		<< "|  	  - ←                                |"
-		// 		<< "|  	  - PgUp                             |"
-		// 		<< "|  	  - PgDown                           |"
-		// 		<< "|  	                                     |"
-		// 		<< "└----------------------------------------┘"
+		cout	<< "┌----------------------------------------┐\n"
+				<< "|                Commands                |\n"
+				<< "|  Object Movements :                    |\n"
+				<< "|     - ↑ : Move Forward                 |\n"
+				<< "|     - ↓ : Move Backward                |\n"
+				<< "|     - → : Move Right                   |\n"
+				<< "|     - ← : Move Left                    |\n"
+				<< "|     - PgUp : Move Up                   |\n"
+				<< "|     - PgDown : Move Down               |\n"
+				<< "|     - LEFT_SHIFT : x2 speed            |\n"
+				<< "|                                        |\n"
+				<< "|   Camera Movements :                   |\n"
+				<< "|     - W : Move Forward                 |\n"
+				<< "|     - A : Move Backward                |\n"
+				<< "|     - S : Move Right                   |\n"
+				<< "|     - D : Move Left                    |\n"
+				<< "|     - Space : Move Up                  |\n"
+				<< "|     - Left_Ctrl : Move Down            |\n"
+				<< "|     - LEFT_SHIFT : x2 speed            |\n"
+				<< "|     - Right_Click Mouse : Rotate       |\n"
+				<< "|                                        |\n"
+				<< "|   Tools :                              |\n"
+				<< "|     - R : Reset Object                 |\n"
+				<< "|     - C : Reset Camera                 |\n"
+				<< "|     - P : Stop auto-rotation           |\n"
+				<< "|     - TAB : Open Gui                   |\n"
+				<< "└----------------------------------------┘\n";
+
+		Camera camera;
+
 		while (!glfwWindowShouldClose(window)) {
-			processInput(window, obj, windowInfo);
+			cout << "[DEBUG] : " << camera << endl;
+			processInput(window, obj, camera ,windowInfo);
 
 			glClearColor(windowInfo.BackgroundColors[0], windowInfo.BackgroundColors[1], windowInfo.BackgroundColors[2], 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -67,7 +87,11 @@ int main(int argc, char **argv)
 				glBindTexture(GL_TEXTURE_2D, texture);
 			}
 
-			render(obj, VAO, modelLoc);
+			Matrix view = camera.getViewMatrix();
+			GLint viewLoc = glGetUniformLocation(shader.shaderProgram, "uView");
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
+
+			render(obj, VAO, shader);
 
 			renderImGui();
 

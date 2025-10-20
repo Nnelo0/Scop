@@ -6,36 +6,26 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
 	glViewport(0, 0, width, heigth);
 }
 
-void processInput(GLFWwindow *window, Obj &obj, WindowInfo &windowInfo)
+void processInput(GLFWwindow *window, Obj &obj, Camera &cam, WindowInfo &windowInfo)
 {
 	//close window
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	//move object
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) obj.position[0] -= 0.2;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) obj.position[0] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS) obj.position[1] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) obj.position[1] -= 0.2;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) obj.position[2] += 0.2;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) obj.position[2] -= 0.2;
+	obj.objectInput(window, windowInfo);
 
-	//reset Object
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-		obj.position[0] = 0.0f;
-		obj.position[1] = 0.0f;
-		obj.position[2] = 0.0f;
-		obj.rotation[0] = 0.0f;
-		obj.rotation[1] = 0.0f;
-		obj.rotation[2] = 0.0f;
-	}
+	cam.camInput(window);
 
-	// stop rotating object
-	bool SpacePressedNow = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-	if (SpacePressedNow && !windowInfo.spacePressedLastFrame) {
-		obj.toggleRotation = !obj.toggleRotation;
+	// Change speed
+	bool ShiftPressedNow = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+	if (ShiftPressedNow) {
+		obj.speed = 0.6f;
+		cam.speed = 0.4f;
 	}
-	windowInfo.spacePressedLastFrame = SpacePressedNow;
+	else {
+		obj.speed = 0.2f;
+		cam.speed = 0.2f;
+	}
 
 	// Toggle Texture
 	bool TPressedNow = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;
@@ -58,7 +48,7 @@ void initWindowInfo(WindowInfo &windowInfo)
 	windowInfo.BackgroundColors[1] = 0.3f;
 	windowInfo.BackgroundColors[2] = 0.69f;
 	
-	windowInfo.spacePressedLastFrame = false;
+	windowInfo.pPressedLastFrame = false;
 	windowInfo.TPressedLastFrame = false;
 	windowInfo.TabPressedLastFrame = false;
 
@@ -77,7 +67,7 @@ GLFWwindow *initWindow(string nameWindow)
 		throw runtime_error("failed to create window\n");
 	}
 	glfwMakeContextCurrent(window);
-	// glfwSwapInterval(0); this is fun...
+	// glfwSwapInterval(0); //this is fun...
 
 	if (glewInit() != GLEW_OK) {
 		glfwTerminate();

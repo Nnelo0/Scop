@@ -205,6 +205,7 @@ Obj::Obj(string filename)
 		throw runtime_error("Failed to parse .obj files");
 
 	triangleCount = faces.size() / 3;
+	speed = 0.2f;
 	objFile.close();
 }
 
@@ -261,5 +262,32 @@ void Obj::generateUVs(vector<vertex> &verts)
 				v->v = (v->y - minX) / sizeZ;
 			}
 		}
+	}
+}
+
+void Obj::objectInput(GLFWwindow *window, WindowInfo &windowInfo)
+{
+	//move object
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) position[0] -= speed;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) position[0] += speed;
+	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS) position[1] += speed;
+	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) position[1] -= speed;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) position[2] += speed;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) position[2] -= speed;
+
+	//reset Object
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		position[0] = 0.0f;
+		position[1] = 0.0f;
+		position[2] = 0.0f;
+		rotation[0] = 0.0f;
+		rotation[1] = 0.0f;
+		rotation[2] = 0.0f;
+	}
+
+	// stop rotating object
+	bool pPressedNow = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS;
+	if (pPressedNow && !windowInfo.pPressedLastFrame) {
+		toggleRotation = !toggleRotation;
 	}
 }

@@ -1,8 +1,20 @@
 #pragma once
+#include "Vec3.hpp"
+#include <iomanip>
+#include <cassert>
+#include <array>
+#include <cmath>
+#include <fstream>
 
-#include "all.hpp"
+using namespace std;
 
-class Vec3;
+#define RESET	"\033[0m"
+#define RED		"\033[31m"
+#define GREEN	"\033[32m"
+#define YELLOW	"\033[33m"
+#define BLUE	"\033[34m"
+#define MAGENTA	"\033[35m"
+#define CYAN	"\033[36m"
 
 class Matrix
 {

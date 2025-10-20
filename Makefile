@@ -3,7 +3,7 @@ NAME = scop
 C++ = c++
 CC = cc
 
-C++FLAGS = -g -std=c++17
+C++FLAGS = -Wall -Wextra -Werror -g -std=c++17
 CFLAGS = -Wall -Wextra -Werror -g
 
 INCLUDES = -I./includes
@@ -19,6 +19,7 @@ SRCS =	srcs/main.cpp \
 		srcs/Window.cpp \
 		srcs/TooltipInfo.cpp \
 		srcs/Render.cpp \
+		srcs/Camera.cpp \
 		includes/imgui/imgui.cpp \
 		includes/imgui/imgui_draw.cpp \
 		includes/imgui/imgui_impl_glfw.cpp \
