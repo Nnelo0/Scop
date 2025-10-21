@@ -39,15 +39,9 @@ void matrixParameters(Shaders &shader)
 	glUseProgram(shader.shaderProgram);
 
 	Matrix proj = Matrix::perspective(45.0f, 1920.0f / 1080.0f, 0.1f, 102400); // FOV, aspect, near, far
-	// Vec3 eye(0.0f, 0.0f, 7.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
-	// Matrix view = Matrix::lookAt(eye, center, up);
-
-	// GLint viewLoc = glGetUniformLocation(shader.shaderProgram, "uView");
 	GLint projLoc = glGetUniformLocation(shader.shaderProgram, "uProjection");
 
-	// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data());
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, proj.data());
-
 }
 
 void render(Obj &obj, unsigned int &VAO, Shaders &shader)

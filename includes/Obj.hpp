@@ -1,6 +1,11 @@
 #pragma once
 #include "all.hpp"
 
+typedef struct vt
+{
+	float u, v;
+} t_vt;
+
 typedef struct vertex
 {
 	float x,y,z;
@@ -16,9 +21,6 @@ typedef struct face
 
 class Obj
 {
-	private:
-		string nameMtl;
-		string sMode;
 
 	public:
 
@@ -27,6 +29,7 @@ class Obj
 		vector<face> facesParse;
 		vector<unsigned int> faces;
 		vector<vertex> vertices;
+		vector<vt> vts;
 
 		float	position[3] = {0.0f, 0.0f, 0.0f};
 		float	rotation[3] = {0.0f, 0.0f, 0.0f};
@@ -36,6 +39,7 @@ class Obj
 		bool	hasTexture = false;
 		long	triangleCount;
 		float	speed;
+
 
 	public:
 		Obj(string filename);

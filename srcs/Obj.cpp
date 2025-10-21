@@ -5,18 +5,13 @@ Obj::Obj(string filename)
 	string line;
 	ifstream objFile(filename);
 	if (!objFile)
-		throw runtime_error("Failed to read " + filename + '!');
+		throw runtime_error("Failed to read " + filename );
 
 	int nextColors = 'b';
 	while (getline(objFile, line)) {
+		line.erase(remove(line.begin(), line.end(), '\r'), line.end());
 		if (line.find_first_of('#') != string::npos) {
 			line = line.substr(0, line.find_first_of('#'));
-		}
-		// cout << "[DEBUG] : line -> [" + line + ']' << endl;
-
-		if (line.find("mtllib") != string::npos) {
-			nameMtl = line.substr(strlen("mtllib"), line.length());
-			// cout << "[DEBUG] : nameMtl -> " + nameMtl << endl;
 		}
 
 		if (line.find_first_of('o') == 0  && line.find_first_of(' ') == 1) {
@@ -25,15 +20,16 @@ Obj::Obj(string filename)
 		}
 
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
+			// cout << "[DEBUG] : line -> [" + line + ']' << endl;
 			line.erase(0, 2);
 			t_vertex tmp;
 			for (size_t i = 0; i < 3; i++) {
-				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line + '!');
+				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line);
 				string tmpValue = line.substr(0, line.find_first_of(' '));
-				line.erase(0, line.find_first_of(' ') + 1);
 				for (size_t j = 0; line[j]; j++) {
-					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' '))  { cout << "line[j] ["<< line[j] << "]\n"; throw runtime_error("Failed to read Vertex-> " + line + '!'); }
+					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex-> " + line); }
 				}
+				line.erase(0, line.find_first_of(' ') + 1);
 
 				double value = atof(tmpValue.c_str());
 				switch (i) {
@@ -51,12 +47,33 @@ Obj::Obj(string filename)
 						break;
 				}
 			}
+			cout << "X = " << tmp.x<< endl;
 			verticesParse.push_back(tmp);
 		}
 
-		if (line.find_first_of('s') == 0 && line.find_first_of(' ') == 1) {
-			sMode = line.substr(2, line.length());
-			// cout << "[DEBUG] : S -> " + sMode << endl;
+		if (line.find("vt ") == 0) {
+			line.erase(0, 3);
+			t_vt tmp;
+			for (size_t i = 0; i < 2; i++) {
+				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line);
+				string tmpValue = line.substr(0, line.find_first_of(' '));
+				for (size_t j = 0; line[j]; j++) {
+					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex-> " + line); }
+				}
+				line.erase(0, line.find_first_of(' ') + 1);
+
+				double value = atof(tmpValue.c_str());
+				switch (i) {
+					case 0:
+						tmp.u = value;
+						break;
+					case 1:
+						tmp.v = value;
+						break;
+				}
+			}
+			vts.push_back(tmp);
+			hasTexture = true;
 		}
 
 		if (line.find_first_of('f') == 0 && line.find_first_of(' ') == 1) {
@@ -65,116 +82,202 @@ Obj::Obj(string filename)
 			float colors;
 			switch (nextColors)
 			{
-				case 'b':
-					colors = 0.2f;
-					nextColors = 'g';
-					break;
-				case 'g':
-					colors = 0.3f;
-					nextColors = 'l';
-					break;
-				case 'l':
-					colors = 0.4f;
-					nextColors = 'b';
-					break;
+				case 'b': colors = 0.2f; nextColors = 'g'; break;
+				case 'g': colors = 0.3f; nextColors = 'l'; break;
+				case 'l': colors = 0.4f; nextColors = 'b'; break;
 			}
-			for (size_t i = 0; i < 4; i++) {
-				if (line.empty()) continue;
-				if (i < 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Face -> " + line + '!');
-				string tmpValue = line.substr(0, line.find_first_of(' '));
-				line.erase(0, strlen(tmpValue.c_str()) + 1);
-				for (size_t j = 0; line[j]; j++) {
-					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' '))  { cout << "line[j] ["<< line[j] << "]\n"; throw runtime_error("Failed to read Face -> " + line + '!'); }
-				}
+			if (!hasTexture) {
+				for (size_t i = 0; i < 4; i++) {
+					if (line.empty()) continue;
+					if (i < 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Face -> " + line);
+					string tmpValue = line.substr(0, line.find_first_of(' '));
+					for (size_t j = 0; line[j]; j++) {
+						if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r')) {throw runtime_error("Failed to read Face -> " + line);}
+					}
+					line.erase(0, strlen(tmpValue.c_str()) + 1);
 
-				double idx = atof(tmpValue.c_str()) - 1;
-				if (idx < 0)
-					throw runtime_error("Failed to read Face -> " + line + '!');
-				if (tmpFace.vertexCount != 3)
-					faces.push_back(idx);
+					double idx = atof(tmpValue.c_str()) - 1;
+					if (idx < 0)
+						throw runtime_error("Failed to read Face -> " + line);
+					if (tmpFace.vertexCount != 3)
+						faces.push_back(idx);
+					t_vertex tmpVertices;
+					switch (i) {
+						case 0:
+							tmpFace.v1 = idx;
+							tmpFace.vertexCount++;
+
+							tmpVertices = verticesParse[tmpFace.v1];
+							tmpVertices.r = colors;
+							tmpVertices.g = colors;
+							tmpVertices.b = colors;
+
+							vertices.push_back(tmpVertices);
+							break;
+						case 1:
+							tmpFace.v2 = idx;
+							tmpFace.vertexCount++;
+
+							tmpVertices = verticesParse[tmpFace.v2];
+							tmpVertices.r = colors;
+							tmpVertices.g = colors;
+							tmpVertices.b = colors;
+							vertices.push_back(tmpVertices);
+							break;
+						case 2:
+							tmpFace.v3 = idx;
+							tmpFace.vertexCount++;
+
+							tmpVertices = verticesParse[tmpFace.v3];
+							tmpVertices.r = colors;
+							tmpVertices.g = colors;
+							tmpVertices.b = colors;
+							vertices.push_back(tmpVertices);
+							break;
+						case 3:
+							tmpFace.v4 = idx;
+							tmpFace.vertexCount++;
+							break;
+					}
+				}
 				t_vertex tmpVertices;
-				switch (i) {
-					case 0:
-						tmpFace.v1 = idx;
-						tmpFace.vertexCount++;
+				if (tmpFace.vertexCount == 4) {
+					faces.push_back(tmpFace.v1);
+					faces.push_back(tmpFace.v4);
+					faces.push_back(tmpFace.v3);
 
-						tmpVertices = verticesParse[tmpFace.v1];
-						tmpVertices.r = colors;
-						tmpVertices.g = colors;
-						tmpVertices.b = colors;
+					switch (nextColors)
+					{
+						case 'b': colors = 0.2f; nextColors = 'g'; break;
+						case 'g': colors = 0.3f; nextColors = 'l'; break;
+						case 'l': colors = 0.4f; nextColors = 'b'; break;
+					}
 
-						vertices.push_back(tmpVertices);
-						break;
-					case 1:
-						tmpFace.v2 = idx;
-						tmpFace.vertexCount++;
-
-						tmpVertices = verticesParse[tmpFace.v2];
-						tmpVertices.r = colors;
-						tmpVertices.g = colors;
-						tmpVertices.b = colors;
-						vertices.push_back(tmpVertices);
-						break;
-					case 2:
-						tmpFace.v3 = idx;
-						tmpFace.vertexCount++;
-
-						tmpVertices = verticesParse[tmpFace.v3];
-						tmpVertices.r = colors;
-						tmpVertices.g = colors;
-						tmpVertices.b = colors;
-						vertices.push_back(tmpVertices);
-						break;
-					case 3:
-						tmpFace.v4 = idx;
-						tmpFace.vertexCount++;
-						break;
-				}
-			}
-			t_vertex tmpVertices;
-			if (tmpFace.vertexCount == 4) {
-				faces.push_back(tmpFace.v1);
-				faces.push_back(tmpFace.v4);
-				faces.push_back(tmpFace.v3);
-
-				switch (nextColors)
-				{
-					case 'b':
-						colors = 0.2f;
-						nextColors = 'g';
-						break;
-					case 'g':
-						colors = 0.3f;
-						nextColors = 'l';
-						break;
-					case 'l':
-						colors = 0.4f;
-						nextColors = 'b';
-						break;
+					tmpVertices = verticesParse[tmpFace.v1];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					vertices.push_back(tmpVertices);
+					tmpVertices = verticesParse[tmpFace.v4];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					vertices.push_back(tmpVertices);
+					tmpVertices = verticesParse[tmpFace.v3];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					vertices.push_back(tmpVertices);
+					// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 				}
 
-				tmpVertices = verticesParse[tmpFace.v1];
-				tmpVertices.r = colors;
-				tmpVertices.g = colors;
-				tmpVertices.b = colors;
-				vertices.push_back(tmpVertices);
-				tmpVertices = verticesParse[tmpFace.v4];
-				tmpVertices.r = colors;
-				tmpVertices.g = colors;
-				tmpVertices.b = colors;
-				vertices.push_back(tmpVertices);
-				tmpVertices = verticesParse[tmpFace.v3];
-				tmpVertices.r = colors;
-				tmpVertices.g = colors;
-				tmpVertices.b = colors;
-				vertices.push_back(tmpVertices);
-				// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
+				// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
+				// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
+				facesParse.push_back(tmpFace);
+			} else {
+				vector<t_vt> tmpVt;
+				t_vertex tmpVertices;
+				for (size_t i = 0; i < 4; i++) {
+					if (line.empty()) continue;
+					if (i < 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Face -> " + line);
+					string tmpValues = line.substr(0, line.find_first_of(' '));
+					for (size_t j = 0; line[j]; j++) {
+						if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r' && line[j] != '/'))  {throw runtime_error("Failed to read Face -> " + line);}
+					}
+					line.erase(0, strlen(tmpValues.c_str()) + 1);
+					// v/vt/vn
+					// vertice.pusback(v, rgb, vt);
+					for (size_t j = 0; j < 3; j++) {
+						if (tmpValues.empty()) continue;
+						if (j != 2 && tmpValues.find_first_of('/') == string::npos) throw runtime_error("Failed to read Face -> [" + line + "]");
+						string tmpValue = tmpValues.substr(0, tmpValues.find_first_of('/'));
+						// cout << "[" + tmpValue + "]" << "\n";
+						tmpValues.erase(0, strlen(tmpValue.c_str()) + 1);
+						double idx = atof(tmpValue.c_str()) - 1;
+						if (idx < 0)
+							throw runtime_error("Failed to read Face -> " + line);
+						if (j == 0) {
+							switch (i) {
+								case 0:
+									tmpFace.v1 = idx;
+									tmpFace.vertexCount++;
+									tmpVertices = verticesParse[tmpFace.v1];
+									tmpVertices.r = colors;
+									tmpVertices.g = colors;
+									tmpVertices.b = colors;
+									break;
+								case 1:
+									tmpFace.v2 = idx;
+									tmpFace.vertexCount++;
+									tmpVertices = verticesParse[tmpFace.v2];
+									tmpVertices.r = colors;
+									tmpVertices.g = colors;
+									tmpVertices.b = colors;
+									break;
+								case 2:
+									tmpFace.v3 = idx;
+									tmpFace.vertexCount++;
+									tmpVertices = verticesParse[tmpFace.v3];
+									tmpVertices.r = colors;
+									tmpVertices.g = colors;
+									tmpVertices.b = colors;
+									break;
+								case 3:
+									tmpFace.v4 = idx;
+									tmpFace.vertexCount++;
+									break;
+							}
+						} else if (j == 1) {
+							tmpVt.push_back(vts[idx]);
+						 	tmpVertices.u = vts[idx].u;
+							tmpVertices.v = vts[idx].v;
+							// cout << "X = " << tmpVertices.x << endl;
+							vertices.push_back(tmpVertices);
+						} else break;
+					}
+				}
+				if (tmpFace.vertexCount == 4) {
+					faces.push_back(tmpFace.v1);
+					faces.push_back(tmpFace.v4);
+					faces.push_back(tmpFace.v3);
+
+					switch (nextColors)
+					{
+						case 'b': colors = 0.2f; nextColors = 'g'; break;
+						case 'g': colors = 0.3f; nextColors = 'l'; break;
+						case 'l': colors = 0.4f; nextColors = 'b'; break;
+					}
+
+					tmpVertices = verticesParse[tmpFace.v1];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					tmpVertices.u = (*tmpVt.begin()).u;
+					tmpVertices.v = (*tmpVt.begin()).v;
+					vertices.push_back(tmpVertices);
+
+					tmpVertices = verticesParse[tmpFace.v4];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					tmpVertices.u = (*tmpVt.rbegin()).u;
+					tmpVertices.v = (*tmpVt.rbegin()).v;
+					vertices.push_back(tmpVertices);
+
+					tmpVertices = verticesParse[tmpFace.v3];
+					tmpVertices.r = colors;
+					tmpVertices.g = colors;
+					tmpVertices.b = colors;
+					tmpVertices.u = (*(tmpVt.rbegin() + 1)).u;
+					tmpVertices.v = (*(tmpVt.rbegin() + 1)).v;
+					vertices.push_back(tmpVertices);
+					// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
+				}
+
+					// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
+					// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
+					facesParse.push_back(tmpFace);
 			}
-
-			// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
-			// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
-			facesParse.push_back(tmpFace);
-
 		}
 	}
 
@@ -194,19 +297,41 @@ Obj::Obj(string filename)
 	// cout << "[DEBUG] : centery with barycenter -> " << centerY << "\n";
 	// cout << "[DEBUG] : centerz with barycenter -> " << centerZ << "\n";
 
-	if (nameMtl.empty()) {
-		cout << YELLOW "[WARNING] : Failed to found .mtl\n" RESET;
-	}
 	if (name.empty()) {
 		cout << YELLOW "[WARNING] : Failed to found Name\n" RESET;
 	}
 
-	if (facesParse.empty() || verticesParse.empty() || faces.empty() || vertices.empty())
-		throw runtime_error("Failed to parse .obj files");
+	if (facesParse.empty())
+		throw runtime_error("Failed to parse1 .obj files");
 
+	if (verticesParse.empty())
+		throw runtime_error("Failed to parse2 .obj files");
+	// if (faces.empty())
+		// throw runtime_error("Failed to parse3 .obj files");
+	if (vertices.empty())
+		throw runtime_error("Failed to parse4 .obj files");
 	triangleCount = faces.size() / 3;
 	speed = 0.2f;
 	objFile.close();
+
+	std::cout << std::fixed << std::setprecision(4);
+    std::cout << "=== [DEBUG] Vertices (" << vertices.size() << " total) ===" << std::endl;
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        const t_vertex &v = vertices[i];
+        std::cout << "[" << std::setw(5) << i << "] "
+                  << "Pos(" << std::setw(8) << v.x << ", "
+                             << std::setw(8) << v.y << ", "
+                             << std::setw(8) << v.z << ")  "
+                  << "Col(" << std::setw(6) << v.r << ", "
+                             << std::setw(6) << v.g << ", "
+                             << std::setw(6) << v.b << ")  "
+                  << "UV("  << std::setw(6) << v.u << ", "
+                             << std::setw(6) << v.v << ")"
+                  << std::endl;
+    }
+    std::cout << "==============================================" << std::endl;
 }
 
 Obj::~Obj() {}

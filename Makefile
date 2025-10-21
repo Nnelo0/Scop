@@ -1,10 +1,8 @@
 NAME = scop
 
 C++ = c++
-CC = cc
 
 C++FLAGS = -Wall -Wextra -Werror -g -std=c++17
-CFLAGS = -Wall -Wextra -Werror -g
 
 INCLUDES = -I./includes
 
@@ -28,7 +26,6 @@ SRCS =	srcs/main.cpp \
 		includes/imgui/imgui_widgets.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
-OBJS := $(OBJS:%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
@@ -39,9 +36,6 @@ $(OBJDIR):
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
 	$(C++) $(C++FLAGS) $(INCLUDES) -c $< -o $@
-
-$(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(NAME): $(OBJS)
 	$(C++) $(C++FLAGS) $(OBJS) -lglfw -ldl -lGL -lGLU -lGLEW -lm -o $(NAME)

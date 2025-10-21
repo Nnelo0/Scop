@@ -5,7 +5,9 @@ int main(int argc, char **argv)
 	try
 	{
 		Obj obj(argv[1]);
-		obj.generateUVs(obj.vertices);
+		if (!obj.hasTexture) {
+			obj.generateUVs(obj.vertices);
+		}
 
 		if (!glfwInit()) {
 			std::cerr << "failed to init\n";
@@ -102,7 +104,7 @@ int main(int argc, char **argv)
 		glfwTerminate();
 	}
 	catch(const std::exception& e) {
-		std::cerr << RED << e.what() << RESET << '\n';
+		std::cerr << e.what() << '\n';
 	}
 	return 0;
 }
