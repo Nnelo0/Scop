@@ -272,8 +272,8 @@ void Obj::objectInput(GLFWwindow *window, WindowInfo &windowInfo)
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) position[0] += speed;
 	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS) position[1] += speed;
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) position[1] -= speed;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) position[2] += speed;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) position[2] -= speed;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) position[2] -= speed;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) position[2] += speed;
 
 	//reset Object
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -290,4 +290,5 @@ void Obj::objectInput(GLFWwindow *window, WindowInfo &windowInfo)
 	if (pPressedNow && !windowInfo.pPressedLastFrame) {
 		toggleRotation = !toggleRotation;
 	}
+	windowInfo.pPressedLastFrame = pPressedNow;
 }

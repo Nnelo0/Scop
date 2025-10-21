@@ -14,15 +14,10 @@ ostream& operator<<(ostream& os, const Camera& cam)
 }
 
 Camera::Camera(Vec3 startPos, Vec3 upDir, float yawAngle, float pitchAngle):
-position(startPos), front({0.0f, 0.0f, -1.0f}), up(), right(), worldUp(upDir), yaw(yawAngle), pitch(pitchAngle), speed(0.2f), sensitivity(0.1f)
-{
-	updateVectors();
-}
+position(startPos), front({0.0f, 0.0f, -1.0f}), up({0.0f, 1.0f, 0.0f}), right(), worldUp(upDir), yaw(yawAngle), pitch(pitchAngle), speed(0.2f), sensitivity(0.1f)
+{}
 
-Camera::~Camera()
-{
-
-}
+Camera::~Camera() {}
 
 Matrix	Camera::getViewMatrix() const
 {
@@ -41,13 +36,14 @@ void	Camera::moveBackward()
 
 void	Camera::moveLeft()
 {
+	right = Vec3::cross(front, worldUp).normalized();
 	position -= right * speed;
 }
 
 void	Camera::moveRight()
 {
+	right = Vec3::cross(front, worldUp).normalized();
 	position += right * speed;
-
 }
 
 void	Camera::moveUp()
@@ -85,13 +81,14 @@ void Camera::updateVectors()
 	newFront.z = sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	front = newFront.normalized();
 
-	right = Vec3::cross(front, worldUp).normalized();
 	up = Vec3::cross(right, front).normalized();
+	right = Vec3::cross(front, worldUp).normalized();
 }
 
 void Camera::mouseMovement(GLFWwindow *window)
 {
-	double xpos, ypos;
+	// (void)window;
+	double xpos = 0.0, ypos = 0.0;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	if (firstMouse) {
 		lastX = xpos;
@@ -99,14 +96,13 @@ void Camera::mouseMovement(GLFWwindow *window)
 		firstMouse = false;
 	}
 
-	float offsetX = float(xpos - lastX);
-	float offsetY = float(lastY - ypos);
+	double offsetX = xpos - lastX;
+	double offsetY = lastY - ypos;
 
 	lastX = xpos;
 	lastY = ypos;
 
 	processMouse(offsetX, offsetY);
-
 }
 
 void Camera::camInput(GLFWwindow *window)

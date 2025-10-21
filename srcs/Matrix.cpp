@@ -150,7 +150,7 @@ Matrix	Matrix::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
 
 	M(0,0) = s.x;	M(1, 0) = s.y;		M(2, 0) = s.z;		M(3, 0) = 0.0f;
 	M(0,1) = u.x;	M(1, 1) = u.y;		M(2, 1) = u.z;		M(3, 1) = 0.0f;
-	M(0,2) = -f.x;	M(1, 2) = -f.y;	M(2, 2) = -f.z;	M(3, 2) = 0.0f;
+	M(0,2) = -f.x;	M(1, 2) = -f.y;		M(2, 2) = -f.z;		M(3, 2) = 0.0f;
 	M(0, 3) = -Vec3::dot(s, eye);
 	M(1, 3) = -Vec3::dot(u, eye);
 	M(2, 3) = Vec3::dot(f, eye);

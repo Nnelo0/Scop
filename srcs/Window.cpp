@@ -55,8 +55,9 @@ void initWindowInfo(WindowInfo &windowInfo)
 	windowInfo.showDebugWindow = false;
 }
 
-GLFWwindow *initWindow(string nameWindow)
+GLFWwindow *initWindow(string nameWindow, Camera &cam)
 {
+	(void)cam;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -69,6 +70,8 @@ GLFWwindow *initWindow(string nameWindow)
 	glfwMakeContextCurrent(window);
 	// glfwSwapInterval(0); //this is fun...
 
+	// glfwSetCursorPosCallback(window, cam.mouseMovement)
+	// glfwSetMouseButtonCallback(window, )
 	if (glewInit() != GLEW_OK) {
 		glfwTerminate();
 		throw runtime_error ("failed to initialize Glew\n");

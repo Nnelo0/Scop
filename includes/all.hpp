@@ -62,12 +62,12 @@ class Shaders;
 GLuint 			loadTexture(const char *path);
 
 void 			processInput(GLFWwindow *window, Obj &obj, Camera &cam, WindowInfo &windowInfo);
-GLFWwindow*		initWindow(string nameWindow);
+GLFWwindow*		initWindow(string nameWindow, Camera &cam);
 void			initWindowInfo(WindowInfo &windowInfo);
 
 ImGuiIO&		initImGui(GLFWwindow *window);
 void			FrameImGui();
-void			OptionImGui(Obj &obj, WindowInfo &windowInfo, ImGuiIO& io);
+void			OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io);
 void			renderImGui();
 void			ShutdownImGui();
 

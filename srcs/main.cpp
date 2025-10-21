@@ -12,9 +12,10 @@ int main(int argc, char **argv)
 			return -1;
 		}
 
+		Camera camera;
 		WindowInfo windowInfo;
 		initWindowInfo(windowInfo);
-		GLFWwindow *window = initWindow(obj.name);
+		GLFWwindow *window = initWindow(obj.name, camera);
 
 		ImGuiIO& io = initImGui(window);
 
@@ -59,10 +60,9 @@ int main(int argc, char **argv)
 				<< "|     - TAB : Open Gui                   |\n"
 				<< "└----------------------------------------┘\n";
 
-		Camera camera;
 
 		while (!glfwWindowShouldClose(window)) {
-			cout << "[DEBUG] : " << camera << endl;
+			// cout << "[DEBUG] : " << camera << endl;
 			processInput(window, obj, camera ,windowInfo);
 
 			glClearColor(windowInfo.BackgroundColors[0], windowInfo.BackgroundColors[1], windowInfo.BackgroundColors[2], 1.0f);
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
 			FrameImGui();
 			if (windowInfo.showDebugWindow) {
-				OptionImGui(obj, windowInfo, io);
+				OptionImGui(obj, camera, windowInfo, io);
 			}
 
 			if (obj.toggleRotation) {

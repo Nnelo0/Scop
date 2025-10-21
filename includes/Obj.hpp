@@ -44,3 +44,4 @@ class Obj
 		void	generateUVs(vector<vertex> &verts);
 		void	objectInput(GLFWwindow *window, WindowInfo &windowInfo);
 };
+

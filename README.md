@@ -18,5 +18,11 @@ The object can move along the three axes in both directions.
 
 # bonuses
 [✅] - A GUI to display fps, triangles in the scene, and some useful info, to change rotation or texture
-[] - Ctrl+z to remove last change
-[] - Add better camera controls to move within the scene
+[✅] - Add camera controls to move within the scene
+
+purple - twilight
+orange - apple jack cannot fly
+bleu - ranbow dash
+pink - pinkie pie
+jaune - flutter shy
+blanc - Rarity
