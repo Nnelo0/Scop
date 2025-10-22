@@ -83,12 +83,11 @@ float Vec3::length() const
 	return sqrt(x*x + y*y + z*z);
 }
 
-/*keep the direction but standardize the length*/
 Vec3 Vec3::normalized() const
 {
 	float len = length();
 	if (len == 0.0f) return {0, 0, 0};
-	return {x / len, y / len, z / len}; 
+	return {x / len, y / len, z / len};
 }
 
 /*Used to project one vector onto another, to calculate the angle between vectors, for lighting, etc.*/
@@ -97,7 +96,6 @@ float Vec3::dot(const Vec3& a, const Vec3& b)
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-/*Used to build orthonormal basis (right, up, forward)*/
 Vec3 Vec3::cross(const Vec3& a, const Vec3& b)
 {
 	return {a.y * b.z - a.z * b.y,

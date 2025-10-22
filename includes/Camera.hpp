@@ -6,8 +6,6 @@
 
 class Camera
 {
-	private:
-		void updateVectors();
 	public:
 		Vec3	position;
 		Vec3	front;
@@ -18,6 +16,7 @@ class Camera
 		float	yaw;
 		float	pitch;
 		float	speed;
+		float	defaultSpeed[1] = {0.2f};
 		float	sensitivity;
 		bool	firstMouse = true;
 		double	lastX = 0.0;
@@ -34,9 +33,6 @@ class Camera
 		void	moveUp();
 		void	moveDown();
 
-		void	processMouse(float offsetX, float offsetY);
 		void	camInput(GLFWwindow *window);
-		void 	mouseMovement(GLFWwindow *window);
+		void	updateVectors();
 };
-
-ostream& operator<<(ostream& os, const Camera& cam);

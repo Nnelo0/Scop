@@ -34,38 +34,35 @@ int main(int argc, char **argv)
 			glUniform1i(glGetUniformLocation(shader.shaderProgram, "uUseTexture"), 0);
 		}
 
-		// cout	<< "┌----------------------------------------┐\n"
-		// 		<< "|                Commands                |\n"
-		// 		<< "|  Object Movements :                    |\n"
-		// 		<< "|     - ↑ : Move Forward                 |\n"
-		// 		<< "|     - ↓ : Move Backward                |\n"
-		// 		<< "|     - → : Move Right                   |\n"
-		// 		<< "|     - ← : Move Left                    |\n"
-		// 		<< "|     - PgUp : Move Up                   |\n"
-		// 		<< "|     - PgDown : Move Down               |\n"
-		// 		<< "|     - LEFT_SHIFT : x2 speed            |\n"
-		// 		<< "|                                        |\n"
-		// 		<< "|   Camera Movements :                   |\n"
-		// 		<< "|     - W : Move Forward                 |\n"
-		// 		<< "|     - A : Move Backward                |\n"
-		// 		<< "|     - S : Move Right                   |\n"
-		// 		<< "|     - D : Move Left                    |\n"
-		// 		<< "|     - Space : Move Up                  |\n"
-		// 		<< "|     - Left_Ctrl : Move Down            |\n"
-		// 		<< "|     - LEFT_SHIFT : x2 speed            |\n"
-		// 		<< "|     - Right_Click Mouse : Rotate       |\n"
-		// 		<< "|                                        |\n"
-		// 		<< "|   Tools :                              |\n"
-		// 		<< "|     - R : Reset Object                 |\n"
-		// 		<< "|     - C : Reset Camera                 |\n"
-		// 		<< "|     - P : Stop auto-rotation           |\n"
-		// 		<< "|     - TAB : Open Gui                   |\n"
-		// 		<< "└----------------------------------------┘\n";
-
+		cout	<< "┌----------------------------------------┐\n"
+				<< "|                Commands                |\n"
+				<< "|  Object Movements :                    |\n"
+				<< "|     - ↑ : Move Forward                 |\n"
+				<< "|     - ↓ : Move Backward                |\n"
+				<< "|     - → : Move Right                   |\n"
+				<< "|     - ← : Move Left                    |\n"
+				<< "|     - PgUp : Move Up                   |\n"
+				<< "|     - PgDown : Move Down               |\n"
+				<< "|     - LEFT_SHIFT : x2 speed            |\n"
+				<< "|                                        |\n"
+				<< "|   Camera Movements :                   |\n"
+				<< "|     - W : Move Forward                 |\n"
+				<< "|     - A : Move Backward                |\n"
+				<< "|     - S : Move Right                   |\n"
+				<< "|     - D : Move Left                    |\n"
+				<< "|     - Space : Move Up                  |\n"
+				<< "|     - Left_Ctrl : Move Down            |\n"
+				<< "|     - LEFT_SHIFT : x2 speed            |\n"
+				<< "|                                        |\n"
+				<< "|   Tools :                              |\n"
+				<< "|     - R : Reset Object                 |\n"
+				<< "|     - C : Reset Camera                 |\n"
+				<< "|     - P : Stop auto-rotation           |\n"
+				<< "|     - TAB : Open Gui                   |\n"
+				<< "└----------------------------------------┘\n";
 
 		while (!glfwWindowShouldClose(window)) {
-			// cout << "[DEBUG] : " << camera << endl;
-			processInput(window, obj, camera ,windowInfo);
+			processInput(window, obj, camera, windowInfo);
 
 			glClearColor(windowInfo.BackgroundColors[0], windowInfo.BackgroundColors[1], windowInfo.BackgroundColors[2], 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -76,9 +73,19 @@ int main(int argc, char **argv)
 			}
 
 			if (obj.toggleRotation) {
+				if (obj.rotation[0] >= 12.6f)
+						obj.rotation[0] = 0.0f;
 				if (obj.rotation[1] >= 12.6f)
-					obj.rotation[1] = 0.0f;
-				obj.rotation[1] += 0.02f;
+						obj.rotation[1] = 0.0f;
+				if (obj.rotation[2] >= 12.6f)
+						obj.rotation[2] = 0.0f;
+
+				if (obj.autoRotate == 0)
+					obj.rotation[0] += 0.02f;
+				if (obj.autoRotate == 1)
+					obj.rotation[1] += 0.02f;
+				if (obj.autoRotate == 2)
+					obj.rotation[2] += 0.02f;
 			}
 
 			if (argc == 3) {

@@ -43,4 +43,3 @@ class Matrix
 		static Matrix	perspective(float fov_deg, float aspect, float near, float far);
 		static Matrix	lookAt(const Vec3& eye, const Vec3& center, const Vec3& up);
 };
-ostream &operator<<(ostream &os, const Matrix &mat);

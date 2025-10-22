@@ -39,7 +39,8 @@ class Obj
 		bool	hasTexture = false;
 		long	triangleCount;
 		float	speed;
-
+		float	defaultSpeed[1] = {0.2f};
+		int		autoRotate;
 
 	public:
 		Obj(string filename);

@@ -158,28 +158,3 @@ Matrix	Matrix::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
 
 	return M;
 }
-
-std::ostream &operator<<(std::ostream &os, const Matrix &mat)
-{
-    os << std::fixed << std::setprecision(3);
-
-    os << CYAN << "┌----------------------------------------┐" << RESET << "\n";
-    for (int row = 0; row < 4; ++row) {
-        os << CYAN << "│ " << RESET;
-        for (int col = 0; col < 4; ++col) {
-            // couleur différente selon la colonne (juste visuel)
-            const char* color;
-            switch (col) {
-                case 0: color = RED; break;      // X axis
-                case 1: color = GREEN; break;    // Y axis
-                case 2: color = BLUE; break;     // Z axis
-                case 3: color = YELLOW; break;   // translation
-                default: color = RESET; break;
-            }
-            os << color << std::setw(8) << mat(row, col) << " " << RESET;
-        }
-        os << CYAN << "	 │" << RESET << "\n";
-    }
-    os << CYAN << "└----------------------------------------┘" << RESET << "\n";
-    return os;
-}

@@ -14,13 +14,11 @@ Obj::Obj(string filename)
 			line = line.substr(0, line.find_first_of('#'));
 		}
 
-		if (line.find_first_of('o') == 0  && line.find_first_of(' ') == 1) {
+		if (line.find_first_of('o') == 0 && line.find_first_of(' ') == 1) {
 			name = line.substr(1, line.length());
-			// cout << "[DEBUG] : name -> " + name << endl;
 		}
 
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
-			// cout << "[DEBUG] : line -> [" + line + ']' << endl;
 			size_t k;
 			for (k = 1; line[k] == ' '; k++);
 
@@ -30,7 +28,7 @@ Obj::Obj(string filename)
 				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line);
 				string tmpValue = line.substr(0, line.find_first_of(' '));
 				for (size_t j = 0; line[j]; j++) {
-					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex-> " + line); }
+					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r')) {throw runtime_error("Failed to read Vertex-> " + line); }
 				}
 				line.erase(0, line.find_first_of(' ') + 1);
 
@@ -62,7 +60,7 @@ Obj::Obj(string filename)
 				if (i != 1 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex Texture -> " + line);
 				string tmpValue = line.substr(0, line.find_first_of(' '));
 				for (size_t j = 0; line[j]; j++) {
-					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex Texture-> " + line); }
+					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r')) {throw runtime_error("Failed to read Vertex Texture-> " + line); }
 				}
 				line.erase(0, line.find_first_of(' ') + 1);
 
@@ -172,11 +170,7 @@ Obj::Obj(string filename)
 					tmpVertices.g = colors;
 					tmpVertices.b = colors;
 					vertices.push_back(tmpVertices);
-					// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 				}
-
-				// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
-				// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
 				facesParse.push_back(tmpFace);
 			} else {
 				vector<t_vt> tmpVt;
@@ -186,7 +180,7 @@ Obj::Obj(string filename)
 					if (i < 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Face -> " + line);
 					string tmpValues = line.substr(0, line.find_first_of(' '));
 					for (size_t j = 0; line[j]; j++) {
-						if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r' && line[j] != '/'))  {throw runtime_error("Failed to read Face -> " + line);}
+						if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r' && line[j] != '/')) {throw runtime_error("Failed to read Face -> " + line);}
 					}
 					line.erase(0, strlen(tmpValues.c_str()) + 1);
 
@@ -273,12 +267,8 @@ Obj::Obj(string filename)
 					tmpVertices.u = (*(tmpVt.rbegin() + 1)).u;
 					tmpVertices.v = (*(tmpVt.rbegin() + 1)).v;
 					vertices.push_back(tmpVertices);
-					// cout << "[DEBUG] : IDX1 -> " << tmpFace.v4 << ", IDX2 -> " << tmpFace.v3 << ", IDX3 -> " << tmpFace.v2 << endl;
 				}
-
-					// cout << "[DEBUG] : f -> " << tmpFace.v1 << ", " << tmpFace.v2 << ", " << tmpFace.v3 << ", " << tmpFace.v4 << "\n";
-					// cout << "[DEBUG] : f v -> " << tmpFace.vertexCount << "\n";
-					facesParse.push_back(tmpFace);
+				facesParse.push_back(tmpFace);
 			}
 		}
 	}
@@ -307,6 +297,8 @@ Obj::Obj(string filename)
 		throw runtime_error("Failed to parse2 .obj files");
 	triangleCount = faces.size() / 3;
 	speed = 0.2f;
+	defaultSpeed[0] = speed;
+	autoRotate = 1;
 	objFile.close();
 }
 

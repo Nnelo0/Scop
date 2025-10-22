@@ -8,8 +8,10 @@ GLuint loadTexture(const char *path)
 	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
-	if (!data)
+	if (!data) {
+		glfwTerminate();
 		throw runtime_error("Failed to load texture: " + string(path));
+	}
 	GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
 
 	GLuint tex;

@@ -17,7 +17,7 @@ unsigned int initBuffers(Obj &obj)
 
 	// -- VBO --
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() *  sizeof(vertex), obj.vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() * sizeof(vertex), obj.vertices.data(), GL_STATIC_DRAW);
 
 	//vertex
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void *)0);

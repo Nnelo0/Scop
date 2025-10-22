@@ -19,12 +19,12 @@ void processInput(GLFWwindow *window, Obj &obj, Camera &cam, WindowInfo &windowI
 	// Change speed
 	bool ShiftPressedNow = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 	if (ShiftPressedNow) {
-		obj.speed = 0.6f;
-		cam.speed = 0.4f;
+		obj.speed = obj.defaultSpeed[0] * 2.0f;
+		cam.speed = cam.defaultSpeed[0] * 2.0f;
 	}
 	else {
-		obj.speed = 0.2f;
-		cam.speed = 0.2f;
+		obj.speed = obj.defaultSpeed[0];
+		cam.speed = cam.defaultSpeed[0];
 	}
 
 	// Toggle Texture
@@ -47,7 +47,7 @@ void initWindowInfo(WindowInfo &windowInfo)
 	windowInfo.BackgroundColors[0] = 0.4f;
 	windowInfo.BackgroundColors[1] = 0.3f;
 	windowInfo.BackgroundColors[2] = 0.69f;
-	
+
 	windowInfo.pPressedLastFrame = false;
 	windowInfo.TPressedLastFrame = false;
 	windowInfo.TabPressedLastFrame = false;
@@ -70,8 +70,6 @@ GLFWwindow *initWindow(string nameWindow, Camera &cam)
 	glfwMakeContextCurrent(window);
 	// glfwSwapInterval(0); //this is fun...
 
-	// glfwSetCursorPosCallback(window, cam.mouseMovement)
-	// glfwSetMouseButtonCallback(window, )
 	if (glewInit() != GLEW_OK) {
 		glfwTerminate();
 		throw runtime_error ("failed to initialize Glew\n");
