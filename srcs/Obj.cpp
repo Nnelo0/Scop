@@ -21,7 +21,10 @@ Obj::Obj(string filename)
 
 		if (line.find_first_of('v') == 0 && line.find_first_of(' ') == 1) {
 			// cout << "[DEBUG] : line -> [" + line + ']' << endl;
-			line.erase(0, 2);
+			size_t k;
+			for (k = 1; line[k] == ' '; k++);
+
+			line.erase(0, k);
 			t_vertex tmp;
 			for (size_t i = 0; i < 3; i++) {
 				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line);
@@ -47,18 +50,19 @@ Obj::Obj(string filename)
 						break;
 				}
 			}
-			cout << "X = " << tmp.x<< endl;
 			verticesParse.push_back(tmp);
 		}
 
 		if (line.find("vt ") == 0) {
-			line.erase(0, 3);
+			size_t k;
+			for (k = 2; line[k] == ' '; k++);
+			line.erase(0, k);
 			t_vt tmp;
 			for (size_t i = 0; i < 2; i++) {
-				if (i != 2 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex -> " + line);
+				if (i != 1 && line.find_first_of(' ') == string::npos) throw runtime_error("Failed to read Vertex Texture -> " + line);
 				string tmpValue = line.substr(0, line.find_first_of(' '));
 				for (size_t j = 0; line[j]; j++) {
-					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex-> " + line); }
+					if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r'))  {throw runtime_error("Failed to read Vertex Texture-> " + line); }
 				}
 				line.erase(0, line.find_first_of(' ') + 1);
 
@@ -158,12 +162,12 @@ Obj::Obj(string filename)
 					tmpVertices.g = colors;
 					tmpVertices.b = colors;
 					vertices.push_back(tmpVertices);
-					tmpVertices = verticesParse[tmpFace.v4];
+					tmpVertices = verticesParse[tmpFace.v3];
 					tmpVertices.r = colors;
 					tmpVertices.g = colors;
 					tmpVertices.b = colors;
 					vertices.push_back(tmpVertices);
-					tmpVertices = verticesParse[tmpFace.v3];
+					tmpVertices = verticesParse[tmpFace.v4];
 					tmpVertices.r = colors;
 					tmpVertices.g = colors;
 					tmpVertices.b = colors;
@@ -185,13 +189,11 @@ Obj::Obj(string filename)
 						if (!isdigit(line[j]) && (line[j] != '-' && line[j] != '.' && line[j] != ' ' && line[j] != '\t' && line[j] != '\r' && line[j] != '/'))  {throw runtime_error("Failed to read Face -> " + line);}
 					}
 					line.erase(0, strlen(tmpValues.c_str()) + 1);
-					// v/vt/vn
-					// vertice.pusback(v, rgb, vt);
+
 					for (size_t j = 0; j < 3; j++) {
 						if (tmpValues.empty()) continue;
 						if (j != 2 && tmpValues.find_first_of('/') == string::npos) throw runtime_error("Failed to read Face -> [" + line + "]");
 						string tmpValue = tmpValues.substr(0, tmpValues.find_first_of('/'));
-						// cout << "[" + tmpValue + "]" << "\n";
 						tmpValues.erase(0, strlen(tmpValue.c_str()) + 1);
 						double idx = atof(tmpValue.c_str()) - 1;
 						if (idx < 0)
@@ -231,8 +233,8 @@ Obj::Obj(string filename)
 							tmpVt.push_back(vts[idx]);
 						 	tmpVertices.u = vts[idx].u;
 							tmpVertices.v = vts[idx].v;
-							// cout << "X = " << tmpVertices.x << endl;
-							vertices.push_back(tmpVertices);
+							if (tmpFace.vertexCount != 4)
+								vertices.push_back(tmpVertices);
 						} else break;
 					}
 				}
@@ -301,37 +303,11 @@ Obj::Obj(string filename)
 		cout << YELLOW "[WARNING] : Failed to found Name\n" RESET;
 	}
 
-	if (facesParse.empty())
-		throw runtime_error("Failed to parse1 .obj files");
-
-	if (verticesParse.empty())
+	if (verticesParse.empty() || facesParse.empty() || vertices.empty())
 		throw runtime_error("Failed to parse2 .obj files");
-	// if (faces.empty())
-		// throw runtime_error("Failed to parse3 .obj files");
-	if (vertices.empty())
-		throw runtime_error("Failed to parse4 .obj files");
 	triangleCount = faces.size() / 3;
 	speed = 0.2f;
 	objFile.close();
-
-	std::cout << std::fixed << std::setprecision(4);
-    std::cout << "=== [DEBUG] Vertices (" << vertices.size() << " total) ===" << std::endl;
-
-    for (size_t i = 0; i < count; ++i)
-    {
-        const t_vertex &v = vertices[i];
-        std::cout << "[" << std::setw(5) << i << "] "
-                  << "Pos(" << std::setw(8) << v.x << ", "
-                             << std::setw(8) << v.y << ", "
-                             << std::setw(8) << v.z << ")  "
-                  << "Col(" << std::setw(6) << v.r << ", "
-                             << std::setw(6) << v.g << ", "
-                             << std::setw(6) << v.b << ")  "
-                  << "UV("  << std::setw(6) << v.u << ", "
-                             << std::setw(6) << v.v << ")"
-                  << std::endl;
-    }
-    std::cout << "==============================================" << std::endl;
 }
 
 Obj::~Obj() {}

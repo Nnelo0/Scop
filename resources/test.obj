@@ -1,0 +1,31 @@
+# ========================
+# Pyramide à base carrée
+# ========================
+
+o Pyramide
+g Base
+
+# --- Sommets (v) ---
+v -1.0 0.0 -1.0
+v  1.0 0.0 -1.0
+v  1.0 0.0  1.0
+v -1.0 0.0  1.0
+v  0.0 1.5  0.0
+
+# --- Faces ---
+# Base (quad)
+f 1 2 3 4
+
+g Faces
+
+# Face avant
+f 4 3 5
+
+# Face droite
+f 3 2 5
+
+# Face arrière
+f 2 1 5
+
+# Face gauche
+f 1 4 5
