@@ -4,7 +4,6 @@ ImGuiIO& initImGui(GLFWwindow *window)
 {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	// (void)io
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
@@ -19,7 +18,7 @@ void FrameImGui()
 	ImGui::NewFrame();
 }
 
-void OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io)
+void OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io, int argc)
 {
 	ImGui::Begin("Tooltip");
 	ImGui::SeparatorText("Debug");
@@ -66,7 +65,7 @@ void OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io)
 
 	ImGui::SeparatorText("Appearance");
 	ImGui::ColorEdit3("R,G,B", windowInfo.BackgroundColors);
-	if (obj.hasTexture)
+	if (obj.hasTexture && argc == 3)
 		ImGui::Checkbox("Use Texture", &obj.toggleTexture);
 	ImGui::End();
 }

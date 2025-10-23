@@ -67,7 +67,7 @@ void			initWindowInfo(WindowInfo &windowInfo);
 
 ImGuiIO&		initImGui(GLFWwindow *window);
 void			FrameImGui();
-void			OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io);
+void			OptionImGui(Obj &obj, Camera &cam, WindowInfo &windowInfo, ImGuiIO& io, int argc);
 void			renderImGui();
 void			ShutdownImGui();
 

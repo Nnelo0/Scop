@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 
 			FrameImGui();
 			if (windowInfo.showDebugWindow) {
-				OptionImGui(obj, camera, windowInfo, io);
+				OptionImGui(obj, camera, windowInfo, io, argc);
 			}
 
 			if (obj.toggleRotation) {
@@ -109,6 +109,9 @@ int main(int argc, char **argv)
 		}
 		ShutdownImGui();
 		glfwTerminate();
+	}
+	catch(const std::logic_error& e) {
+		std::cerr << "Error : Parameters can't be null" << '\n';
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';
