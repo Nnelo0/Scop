@@ -18,10 +18,10 @@ The object can move along the three axes in both directions (X,Y,Z).
 ## 🏗️ Technical Overview
 ### 1. 📦 Parse .obj
 my programs support :
-```v``` -> vertex position ```(x, y, z)```
-```vt``` -> textures coordinates ```(u, v)```
-```f``` -> faces ```(v/vt/vn)```
-```vn``` -> normal (ignored here, no lighting use)
+* ```v``` -> vertex position ```(x, y, z)```
+* ```vt``` -> textures coordinates ```(u, v)```
+* ```f``` -> faces ```(v/vt/vn)```
+* ```vn``` -> normal (ignored here, no lighting use)
 
 ### 2. 🎨 Shaders system
 Shaders are loaded from external files, compiled in runtime and linked into a program
