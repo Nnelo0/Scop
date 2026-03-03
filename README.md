@@ -1,6 +1,6 @@
 # 🔺 Scop — first step in 3D with GPU
 
-# introduction
+# 📝 introduction
 
 **scop** is a program that takes a *.obj* file to render a 3D object with OpenGL in C++.
 The 3D object must rotate around itself, and with a play of colors we can
@@ -9,21 +9,21 @@ The object can move along the three axes in both directions (X,Y,Z).
 
 ## ✨ Features
 
-* **.obj files** can takes all .obj files
-* **Textures** using *stb_image* to load textures on object
-* **Debug Gui** with *ImGui* (show fps, triangles, can change transform of object or camera)
-* **Camera** basic camera with no rotations
+* 📦 **.obj files** can takes all .obj files
+* 🎨 **Textures** using *stb_image* to load textures on object
+* 🛠️ **Debug Gui** with *ImGui* (show fps, triangles, can change transform of object or camera)
+* 🎥 **Camera** basic camera with no rotations
 ---
 
 ## 🏗️ Technical Overview
-### 1. Parse .obj
+### 1. 📦 Parse .obj
 my programs support :
 ```v``` -> vertex position ```(x, y, z)```
 ```vt``` -> textures coordinates ```(u, v)```
 ```f``` -> faces ```(v/vt/vn)```
 ```vn``` -> normal (ignored here, no lighting use)
 
-### 2. Shaders system
+### 2. 🎨 Shaders system
 Shaders are loaded from external files, compiled in runtime and linked into a program
 * Read shader source from file
 * ```glCreateShader```
@@ -60,11 +60,23 @@ void main()
 * ```layout(location = x)``` binds VBO attributes (like vertex of triangle)
 * ```uniform``` matrices are updates every frame from the CPU (like texture)
 
-### 3. Pipeline rendering
+### 3. ⚡ Pipeline rendering
 Rendering is based on VAO + VBO
 * **VAO** -> Vertex Array object (stores wich VBO is used, how to interpret buffer data...)
 * **VBO** -> Vertex buffer object (GPU memory buffer that stores vertex data)
-### 4. use ImGui
+
+### 4. 🛠️ use ImGui
+ImGui is pratical for debug when we develloping.
+Exemple :
+```
+ImGui::Begin("Tooltip");
+ImGui::SeparatorText("Debug");
+ImGui::Text("FPS: %.1f", io.Framerate);
+ImGui::Text("Render time: %.2f ms", 1000.0f / io.Framerate);
+ImGui::Text("Triangles: %ld", obj.triangleCount);
+ImGui::End();
+```
+This can show us FPS and triangles
 
 ## 🚀 Installation
 
@@ -112,6 +124,13 @@ Rendering is based on VAO + VBO
 ```
 
 ---
+
+## 🖼️ Exemple
+
+### Without Texture :
+![scop](resources/img/withoutTexture.png)
+### With Texture :
+![scop](resources/img/withTexture.png)
 
 ## 📜 Credits & Contributors
 - 🎨 **Nnelo** — do all things ([GitHub](https://github.com/Nnelo0)) 
